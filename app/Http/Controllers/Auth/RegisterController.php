@@ -6,16 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserRegistrationRequest;
 
 class RegisterController extends Controller
 {
-    public function register(request $request)
+    public function register(UserRegistrationRequest $request)
     {
-        $validated = $request->validate([
-                   'name' => 'required|string|max:255',
-                   'email' => 'required|email|unique:users,email',
-                   'password' => 'required|string|min:6|confirmed',
-               ]);
+        $validated = $request->validated();
 
         $user = User::create([
             'name' => $validated['name'],
