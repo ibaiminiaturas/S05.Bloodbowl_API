@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserRegistrationTest extends TestCase
 {
@@ -20,8 +21,8 @@ class UserRegistrationTest extends TestCase
         $response = $this->postJson('/api/register', [
             'name' => 'Ibaimania',
             'email' => 'ibai@example.com',
-            'password' => 'secret123',
-            'password_confirmation' => 'secret123',
+            'password' => Hash::make('secret123'),
+            'password_confirmation' => 'secret123'
         ]);
 
         $response->assertStatus(201);
