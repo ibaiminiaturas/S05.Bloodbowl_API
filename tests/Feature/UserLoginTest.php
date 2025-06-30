@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserLoginTest extends TestCase
 {
-    public function test_user_can_login()
+    public function delete_user_and_create(): User
     {
         $user = User::Where('email', 'ibai@example.com')->first();
 
@@ -16,14 +16,24 @@ class UserLoginTest extends TestCase
             $user->delete();
         }
 
-        $user = User::factory()->create([
+
+        $new_user = User::factory()->create([
             'email' => 'ibai@example.com',
             'password' => Hash::make('secret123'),
         ]);
 
+        return $new_user;
+
+    }
+
+    public function test_user_can_authenticate_with_correct_credentials()
+    {
+
+        $user = $this->delete_user_and_create();
+
         $response = $this->postJson('/api/login', [
-            'email' => 'ibai@example.com',
-            'password' => 'secret123',
+            'email' => $user->email,
+            'password' =>  'secret123',
         ]);
 
         $response->assertStatus(200);
@@ -32,6 +42,60 @@ class UserLoginTest extends TestCase
             'access_token',
             'token_type',
         ]);
+    }
+
+    public function test_user_cant_authenticate_with_incorrect_credentials()
+    {
+
+        $user = $this->delete_user_and_create();
+
+        $response = $this->postJson('/api/login', [
+            'email' => $user->email,
+            'password' =>  'secret1234',
+        ]);
+
+
+        $response->assertStatus(422);
+
+        $response->assertJsonValidationErrors('email');
+        $errors = $response->json('errors');
+        $this->assertStringContainsString('Invalid credentials.', $errors['email'][0]);
+    }
+
+    public function test_user_cant_authenticate_with_no_email()
+    {
+
+        $user = $this->delete_user_and_create();
+
+        $response = $this->postJson('/api/login', [
+            'email' => '',
+            'password' =>  'secret123',
+        ]);
+
+
+        $response->assertStatus(422);
+
+        $response->assertJsonValidationErrors('email');
+        $errors = $response->json('errors');
+        $this->assertStringContainsString('The email field is required.', $errors['email'][0]);
+    }
+
+    public function test_user_cant_authenticate_with_no_password()
+    {
+
+        $user = $this->delete_user_and_create();
+
+        $response = $this->postJson('/api/login', [
+            'email' => $user->email,
+            'password' =>  '',
+        ]);
+
+
+        $response->assertStatus(422);
+
+        $response->assertJsonValidationErrors('password');
+        $errors = $response->json('errors');
+        $this->assertStringContainsString('The password field is required.', $errors['password'][0]);
     }
 
 }
