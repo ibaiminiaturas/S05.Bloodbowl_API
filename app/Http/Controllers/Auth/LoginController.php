@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Laravel\Passport\Passport;
+use Laravel\Passport\Token;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -37,19 +39,23 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        // Revoca el token actual del usuario autenticado
         $token = $request->user()->token();
 
-        if ($token) {
-            $token->revoke();
-        }
+        error_log('Token antes: ' . json_encode([
+            'id' => $token->id,
+            'revoked' => $token->revoked
+        ]));
+
+        $token->revoke();
 
         $token->refresh();
+        error_log('Token después: ' . json_encode([
+            'id' => $token->id,
+            'revoked' => $token->revoked
+        ]));
 
         return response()->json([
             'message' => 'Successfully logged out'
         ], 200);
-
     }
-
 }
