@@ -10,7 +10,7 @@ class UserLoginTest extends TestCase
 {
     public function delete_user_and_create(): User
     {
-        $user = User::Where('email', 'ibai@example.com')->first();
+        $user = User::Wherefirst('email', 'ibai@example.com');
 
         if ($user != null) {
             $user->delete();
@@ -65,8 +65,6 @@ class UserLoginTest extends TestCase
     public function test_user_cant_authenticate_with_no_email()
     {
 
-        $user = $this->delete_user_and_create();
-
         $response = $this->postJson('/api/login', [
             'email' => '',
             'password' =>  'secret123',
@@ -83,10 +81,8 @@ class UserLoginTest extends TestCase
     public function test_user_cant_authenticate_with_no_password()
     {
 
-        $user = $this->delete_user_and_create();
-
         $response = $this->postJson('/api/login', [
-            'email' => $user->email,
+            'email' => "any@email.com",
             'password' =>  '',
         ]);
 
