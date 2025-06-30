@@ -10,7 +10,7 @@ class UserLoginTest extends TestCase
 {
     public function delete_user_and_create(): User
     {
-        $user = User::Wherefirst('email', 'ibai@example.com');
+        $user = User::firstWhere('email', 'ibai@example.com');
 
         if ($user != null) {
             $user->delete();
