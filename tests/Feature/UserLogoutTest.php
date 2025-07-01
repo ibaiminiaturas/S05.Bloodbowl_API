@@ -19,5 +19,11 @@ class UserLogoutTest extends TestCase
         ])->postJson('/api/logout');
 
         $response->assertStatus(200);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->getJson('/api/user');
+
+        $response->assertStatus(401);
     }
 }

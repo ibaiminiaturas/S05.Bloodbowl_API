@@ -10,7 +10,7 @@ Route::post('/login', [LoginController::class, 'login']);
 
 
 // Rutas protegidas por autenticación
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', 'token.revoked'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
 
     Route::get('/user', function (Request $request) {
