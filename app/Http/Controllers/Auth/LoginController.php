@@ -41,18 +41,9 @@ class LoginController extends Controller
     {
         $token = $request->user()->token();
 
-        error_log('Token antes: ' . json_encode([
-            'id' => $token->id,
-            'revoked' => $token->revoked
-        ]));
-
         $token->revoke();
 
         $token->refresh();
-        error_log('Token después: ' . json_encode([
-            'id' => $token->id,
-            'revoked' => $token->revoked
-        ]));
 
         return response()->json([
             'message' => 'Successfully logged out'
