@@ -42,6 +42,11 @@ class UserLoginTest extends TestCase
             'access_token',
             'token_type',
         ]);
+
+        if ($user != null) {
+            $user->delete();
+        }
+
     }
 
     public function test_user_cant_authenticate_with_incorrect_credentials()
@@ -60,6 +65,7 @@ class UserLoginTest extends TestCase
         $response->assertJsonValidationErrors('email');
         $errors = $response->json('errors');
         $this->assertStringContainsString('Invalid credentials.', $errors['email'][0]);
+
     }
 
     public function test_user_cant_authenticate_with_no_email()
