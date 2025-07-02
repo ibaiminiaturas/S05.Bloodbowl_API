@@ -4,8 +4,10 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
-class RolesCreationSedder extends Seeder
+
+class RolesCreationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
