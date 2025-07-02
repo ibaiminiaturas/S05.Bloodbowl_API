@@ -21,30 +21,59 @@ class UserRegistrationTest extends TestCase
         $response = $this->postJson('/api/register', [
             'name' => 'Ibaimania',
             'email' => 'ibai@example.com',
-            'password' => Hash::make('secret123'),
-            'password_confirmation' => 'secret123'
+            'password' => 'secret123',
+            'password_confirmation' =>'secret123',
         ]);
-
         $response->assertStatus(201);
+
         $this->assertDatabaseHas('users', [
             'email' => 'ibai@example.com',
         ]);
+
+        
+        if ($user != null) {
+            $user->delete();
+        }
+
+
     }
 
 
     public function test_user_already_exists(): void
     {
+
+        $user = User::Where('email', 'ibai@example.com')->first();
+
+        if ($user != null) {
+            $user->delete();
+        }
+
         $response = $this->postJson('/api/register', [
             'name' => 'Ibaimania',
             'email' => 'ibai@example.com',
             'password' => 'secret123',
-            'password_confirmation' => 'secret123',
+            'password_confirmation' =>'secret123',
+        ]);
+
+
+
+        $response = $this->postJson('/api/register', [
+            'name' => 'anotherIbai',
+            'email' => 'ibai@example.com',
+            'password' => 'secret1234',
+            'password_confirmation' => 'secret1234',
         ]);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('email');
         $errors = $response->json('errors');
         $this->assertStringContainsString('The email has already been taken.', $errors['email'][0]);
+        
+        $user = User::Where('email', 'ibai@example.com')->first();
+
+        if ($user != null) {
+            $user->delete();
+        }
 
     }
 

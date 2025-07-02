@@ -5,31 +5,17 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Tests\Traits\UtilsForTesting;
+
 
 class UserLoginTest extends TestCase
 {
-    public function delete_user_and_create(): User
-    {
-        $user = User::firstWhere('email', 'ibai@example.com');
-
-        if ($user != null) {
-            $user->delete();
-        }
-
-
-        $new_user = User::factory()->create([
-            'email' => 'ibai@example.com',
-            'password' => Hash::make('secret123'),
-        ]);
-
-        return $new_user;
-
-    }
+    use UtilsForTesting;
 
     public function test_user_can_authenticate_with_correct_credentials()
     {
 
-        $user = $this->delete_user_and_create();
+        $user = $this->DeleteUserAndCreate();
 
         $response = $this->postJson('/api/login', [
             'email' => $user->email,
@@ -42,12 +28,17 @@ class UserLoginTest extends TestCase
             'access_token',
             'token_type',
         ]);
+
+        if ($user != null) {
+            $user->delete();
+        }
+
     }
 
     public function test_user_cant_authenticate_with_incorrect_credentials()
     {
 
-        $user = $this->delete_user_and_create();
+        $user = $this->DeleteUserAndCreate();
 
         $response = $this->postJson('/api/login', [
             'email' => $user->email,
@@ -60,6 +51,12 @@ class UserLoginTest extends TestCase
         $response->assertJsonValidationErrors('email');
         $errors = $response->json('errors');
         $this->assertStringContainsString('Invalid credentials.', $errors['email'][0]);
+
+        
+        if ($user != null) {
+            $user->delete();
+        }
+
     }
 
     public function test_user_cant_authenticate_with_no_email()
