@@ -21,14 +21,15 @@ class UserRegistrationTest extends TestCase
         $response = $this->postJson('/api/register', [
             'name' => 'Ibaimania',
             'email' => 'ibai@example.com',
-            'password' => Hash::make('secret123'),
-            'password_confirmation' => 'secret123'
+            'password' => 'secret123',
+            'password_confirmation' =>'secret123',
         ]);
-
         $response->assertStatus(201);
+
         $this->assertDatabaseHas('users', [
             'email' => 'ibai@example.com',
         ]);
+
     }
 
 

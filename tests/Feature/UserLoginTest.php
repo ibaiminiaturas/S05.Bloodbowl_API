@@ -66,6 +66,11 @@ class UserLoginTest extends TestCase
         $errors = $response->json('errors');
         $this->assertStringContainsString('Invalid credentials.', $errors['email'][0]);
 
+        
+        if ($user != null) {
+            $user->delete();
+        }
+
     }
 
     public function test_user_cant_authenticate_with_no_email()
