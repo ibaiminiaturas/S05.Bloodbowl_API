@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PlayerType extends Model
 {
     /** @use HasFactory<\Database\Factories\PlayerTypeFactory> */
-    use HasFactory;
+
+    public function roster()
+    {
+        return $this->belongsTo(Roster::class);
+    }
 }
