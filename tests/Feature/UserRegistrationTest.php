@@ -7,11 +7,13 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 
 class UserRegistrationTest extends TestCase
 {
     public function test_user_can_register_successfully(): void
     {
+        $this->withoutExceptionHandling();
         $user = User::Where('email', 'ibai@example.com')->first();
 
         if ($user != null) {
@@ -22,20 +24,22 @@ class UserRegistrationTest extends TestCase
             'name' => 'Ibaimania',
             'email' => 'ibai@example.com',
             'password' => 'secret123',
-            'password_confirmation' =>'secret123',
+            'password_confirmation' => 'secret123',
         ]);
+
         $response->assertStatus(201);
 
         $this->assertDatabaseHas('users', [
             'email' => 'ibai@example.com',
         ]);
 
-        
+
+        $user = User::Where('email', 'ibai@example.com')->first();
+
+
         if ($user != null) {
             $user->delete();
         }
-
-
     }
 
 
@@ -52,7 +56,7 @@ class UserRegistrationTest extends TestCase
             'name' => 'Ibaimania',
             'email' => 'ibai@example.com',
             'password' => 'secret123',
-            'password_confirmation' =>'secret123',
+            'password_confirmation' => 'secret123',
         ]);
 
 
@@ -68,7 +72,7 @@ class UserRegistrationTest extends TestCase
         $response->assertJsonValidationErrors('email');
         $errors = $response->json('errors');
         $this->assertStringContainsString('The email has already been taken.', $errors['email'][0]);
-        
+
         $user = User::Where('email', 'ibai@example.com')->first();
 
         if ($user != null) {
