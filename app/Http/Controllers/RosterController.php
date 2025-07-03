@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Roster;
+use App\Models\PlayerType;
 use Illuminate\Http\Request;
 
 class RosterController extends Controller
@@ -20,6 +21,7 @@ class RosterController extends Controller
      */
     public function show(Roster $roster)
     {
-        return response()->json($roster);
+        $rosterData = PlayerType::where('roster_id', $roster->id);
+        return response()->json(['data' =>$rosterData]);
     }
 }

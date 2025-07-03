@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\PlayerType;
 use Laravel\Passport\Passport;
 use Tests\Traits\UtilsForTesting;
 
@@ -29,7 +30,9 @@ class RosterDataRetrieveTest extends TestCase
 
         $this->assertNotEmpty($data);
 
-        $playersFromRoster = PlayerType::where('roster_id', 1);
+        $playersFromRoster = PlayerType::where('roster_id', 1)->get();
+
+        $this->assertNotEmpty($playersFromRoster);
 
         $this->assertEquals(count($data['data']), count($playersFromRoster));
 

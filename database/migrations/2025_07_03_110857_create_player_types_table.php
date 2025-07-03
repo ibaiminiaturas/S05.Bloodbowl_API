@@ -6,14 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('player_types', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('name', 100);
+            $table->unsignedBigInteger('roster_id');
+            $table->integer('max_per_team');
+            $table->tinyInteger('movement');
+            $table->tinyInteger('strength');
+            $table->tinyInteger('agility');
+            $table->tinyInteger('passing');
+            $table->tinyInteger('armor');
+            $table->integer('cost');
+
+            $table->foreign('roster_id')->references('id')->on('rosters')->onDelete('cascade');
         });
     }
 
