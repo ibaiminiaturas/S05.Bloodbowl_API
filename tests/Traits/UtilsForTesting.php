@@ -9,7 +9,7 @@ use Spatie\Permission\Models\Role;
 
 trait UtilsForTesting {
 
-public function DeleteUserAndCreate(): User
+public function DeleteUserAndCreate(bool $coachRole = true): User
     {
         $user = User::firstWhere('email', 'ibai@example.com');
 
@@ -22,9 +22,9 @@ public function DeleteUserAndCreate(): User
             'email' => 'ibai@example.com',
             'password' => Hash::make('secret123'),
         ]);
-
-        $new_user->assignRole('coach');    
-
+        if ($coachRole){
+            $new_user->assignRole('coach');    
+        }
         return $new_user;
 
     }

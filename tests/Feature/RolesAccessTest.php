@@ -46,14 +46,13 @@ class RolesAccessTest extends TestCase
     public function test_coach_user_can_access_coach_role_funcionalities(): void
     {
         $user = $this->DeleteUserAndCreate();
-        $user->assignRole('coach');
 
         Passport::actingAs($user);
 
         $response = $this->getJson('/api/skills');
 
         $response->assertStatus(200);
-       // $user->delete();
+        $user->delete();
     }
 
     public function test_admin_user_can_access_coach_role_funcionalities(): void
@@ -65,6 +64,18 @@ class RolesAccessTest extends TestCase
         $response = $this->getJson('/api/skills');
 
         $response->assertStatus(200);
+    }
+
+    public function test_user_with_no_roles_can_access_coach_role_funcionalities(): void
+    {
+        $user = $this->DeleteUserAndCreate(false);
+
+        Passport::actingAs($user);
+
+        $response = $this->getJson('/api/skills');
+
+        $response->assertStatus(403);
+        $user->delete();
     }
 
 }
