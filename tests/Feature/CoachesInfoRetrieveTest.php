@@ -30,7 +30,19 @@ class CoachesInfoRetrieveTest extends TestCase
         $this->assertNotEmpty($data);
 
         $this->assertEquals(count($data['data']), User::role('coach', [], 'api')->get()->count());
+    }
 
 
+    public function test_no_admin_user_can_not_get_all_coaches(): void
+    {
+        $user = $this->DeleteUserAndCreate();
+
+        Passport::actingAs($user);
+
+        $response = $this->getJson('/api/coaches');
+
+        $response->assertStatus(403);
+
+        $user->delete();
     }
 }
