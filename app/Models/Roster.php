@@ -11,4 +11,9 @@ class Roster extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function playerTypes()
+    {
+        return $this->hasMany(PlayerType::class);
+    }
 }

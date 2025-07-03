@@ -21,7 +21,7 @@ class RosterController extends Controller
      */
     public function show(Roster $roster)
     {
-        $rosterData = PlayerType::where('roster_id', $roster->id);
+        $rosterData = $roster->playerTypes;
         return response()->json(['data' =>$rosterData]);
     }
 }
