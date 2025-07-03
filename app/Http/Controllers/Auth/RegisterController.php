@@ -21,11 +21,14 @@ class RegisterController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        $role = Role::findByName('coach');
-        if ($role){
+        $role = Role::firstOrCreate(
+            ['name' => 'coach', 'guard_name' => 'api']
+        );
+
+        if ($role) {
             $user->assignRole($role);
-        }else{
-            return response()->json(405);    
+        } else {
+            return response()->json(405);
         }
 
         return response()->json($user, 201);

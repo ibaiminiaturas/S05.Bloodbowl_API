@@ -16,11 +16,11 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
 
-    protected function getDefaultGuardName(): string
-    {
-        return 'api';
-    }
 
+    //protected function getDefaultGuardName(): string
+    //{
+    //   return 'api';
+    // }
     /**
      * The attributes that are mass assignable.
      *

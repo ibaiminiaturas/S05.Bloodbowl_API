@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+//app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -28,8 +29,13 @@ class CoachesInfoRetrieveTest extends TestCase
 
         $data = $response->json();
         $this->assertNotEmpty($data);
+        //codigo por si acaso que menuda liada
+        //$coachesAmount = User::with('roles')->get()->filter(
+        //   fn ($user) => $user->roles->where('name', 'coach')->toArray()
+        //)->count();
+        $users = User::role('coach')->get();
+        $this->assertEquals(count($data['data']), $users->count());
 
-        $this->assertEquals(count($data['data']), User::role('coach', [], 'api')->get()->count());
     }
 
 
@@ -44,5 +50,21 @@ class CoachesInfoRetrieveTest extends TestCase
         $response->assertStatus(403);
 
         $user->delete();
+    }
+
+    public function test_admin_user_can_get_one_coach(): void
+    {
+        $admin = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+
+        Passport::actingAs($admin);
+
+        $coach = $this->DeleteUserAndCreate();
+
+        $response = $this->getJson('/api/coaches/'.$coach->id);
+
+        $response->assertStatus(200);
+
+        $coach->delete();
+
     }
 }

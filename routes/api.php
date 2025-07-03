@@ -28,4 +28,5 @@ Route::middleware(['auth:api', 'token.revoked', 'role:admin|coach'])->group(func
     Route::get('/skills', [SkillController::class, 'index']);
     Route::get('/rosters', [RosterController::class, 'index']);
     Route::get('/rosters/{roster}', [RosterController::class, 'show']);
+    Route::get('/coaches/{coach}', [CoachController::class, 'show']);
 });
