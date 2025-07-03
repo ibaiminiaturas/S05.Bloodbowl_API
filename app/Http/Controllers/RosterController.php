@@ -20,6 +20,6 @@ class RosterController extends Controller
      */
     public function show(Roster $roster)
     {
-        //
+        return response()->json($roster);
     }
 }
