@@ -46,14 +46,14 @@ class TeamUpdateTest extends TestCase
         $response = $this->putJson(
             '/api/teams/'. $team->id,
             [
-                'gold_remaining' => 1000011,
+                'name' => 'Random name_' .  $team->id,
                 'team_value' => 100011
             ]
         );
 
         $response->assertStatus(200);
 
-        $team->delete();
+        //$team->delete();
     }
 
     public function test_coach_user_can_update_his_team(): void
@@ -82,8 +82,8 @@ class TeamUpdateTest extends TestCase
         $response = $this->putJson(
             '/api/teams/'. $team->id,
             [
-                'gold_remaining' => 1000011,
-                'team_value' => 100011
+                'name' => 'Random name_' .  $team->id,
+                'team_value' => 100012
             ]
         );
 
@@ -112,13 +112,14 @@ class TeamUpdateTest extends TestCase
         $response->assertStatus(201);
 
         $team = Team::where('name', 'Test team')->first();
+
         $coach2 = $this->DeleteUserAndCreate(true, 'another_user@gmail.com');
         Passport::actingAs($coach2);
 
         $response = $this->putJson(
             '/api/teams/'. $team->id,
             [
-                'gold_remaining' => 1000011,
+                'name' => 'Random name_' .  $team->id,
                 'team_value' => 100011
             ]
         );
@@ -126,6 +127,6 @@ class TeamUpdateTest extends TestCase
         $response->assertStatus(403);
         $coach2->delete();
         $coach->delete();
-        $team->delete();
+        //$team->delete();
     }
 }

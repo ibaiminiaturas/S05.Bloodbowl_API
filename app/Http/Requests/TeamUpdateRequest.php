@@ -22,7 +22,7 @@ class TeamUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-                    'gold_remaining' => 'required|integer|min:800000|max:30000000',
+                    'name' => 'required|min:6|max:255|unique:teams,name',
                     'team_value' => 'required|integer|min:0|max:1000000',
 
         ];

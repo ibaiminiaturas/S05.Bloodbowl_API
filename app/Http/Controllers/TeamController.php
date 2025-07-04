@@ -46,7 +46,7 @@ class TeamController extends Controller
 
         if ($user->hasRole('admin') || ($user->hasRole('coach') && $team->coach_id == $user->id)) {
             $team->update([
-                'gold_remaining' => $validated['gold_remaining'],
+                'name' => $validated['name'],
                 'team_value' => $validated['team_value'],
             ]);
             return response()->json($team, 200);
