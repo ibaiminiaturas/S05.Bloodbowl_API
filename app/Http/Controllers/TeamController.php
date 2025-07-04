@@ -20,9 +20,6 @@ class TeamController extends Controller
             'team_value' => $validated['team_value'],
         ]);
 
-
-
-
         return response()->json($team, 201);
 
     }

@@ -6,10 +6,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Roster;
 use Laravel\Passport\Passport;
+use Tests\Traits\UtilsForTesting;
 
-class TeamCanBeCreatedTest extends TestCase
+class TeamCreationTest extends TestCase
 {
+    use UtilsForTesting;
     /**
      * A basic feature test example.
      */
@@ -20,7 +23,18 @@ class TeamCanBeCreatedTest extends TestCase
 
         Passport::actingAs($user);
 
-        $response = $this->postJson('/api/teams');
+        $coach = $this->DeleteUserAndCreate();
+
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'coach_id' => $coach->id,
+            'rooter_id' => Roster::first()->id,
+            'gold_remaining' => 1000000,
+            'team_value' => 100000
+        ]
+        );
 
         $response->assertStatus(200);
     }
