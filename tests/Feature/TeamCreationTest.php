@@ -26,20 +26,11 @@ class TeamCreationTest extends TestCase
 
         $coach = $this->DeleteUserAndCreate();
 
-        $response = $this->postJson(
-            '/api/teams',
-            [
-            'name' => 'Test team',
-            'coach_id' => $coach->id,
-            'roster_id' => Roster::first()->id,
-            'gold_remaining' => 1000000,
-            'team_value' => 100000
-        ]
-        );
-
-        Team::where('name', '=', 'Test team')->delete();
+        $response = $this->createTeam($coach->id);
 
         $response->assertStatus(201);
+
+        Team::where('name', 'Test team')->delete();
     }
 
 
@@ -48,16 +39,7 @@ class TeamCreationTest extends TestCase
         $coach = $this->DeleteUserAndCreate();
         Passport::actingAs($coach);
 
-        $response = $this->postJson(
-            '/api/teams',
-            [
-            'name' => 'Test team',
-            'coach_id' => $coach->id,
-            'roster_id' => Roster::first()->id,
-            'gold_remaining' => 1000000,
-            'team_value' => 100000
-        ]
-        );
+        $response = $this->createTeam($coach->id);
 
         $response->assertStatus(403);
     }
@@ -138,28 +120,11 @@ class TeamCreationTest extends TestCase
 
         $coach = $this->DeleteUserAndCreate();
 
-        $response = $this->postJson(
-            '/api/teams',
-            [
-            'name' => 'Test team',
-            'coach_id' => $coach->id,
-            'roster_id' => Roster::first()->id,
-            'gold_remaining' => 1000000,
-            'team_value' => 100000
-        ]
-        );
+        $response = $this->createTeam($coach->id);
+
         $response->assertStatus(201);
 
-        $response = $this->postJson(
-            '/api/teams',
-            [
-            'name' => 'Test team',
-            'coach_id' => $coach->id,
-            'roster_id' => Roster::first()->id,
-            'gold_remaining' => 1000000,
-            'team_value' => 100000
-        ]
-        );
+        $response = $this->createTeam($coach->id);
 
         $response->assertStatus(422);
 

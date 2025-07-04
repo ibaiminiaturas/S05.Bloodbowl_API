@@ -3,6 +3,7 @@
 namespace Tests\Traits;
 
 use App\Models\User;
+use App\Models\Roster;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
@@ -32,9 +33,24 @@ trait UtilsForTesting
 
     }
 
-    public function getAdminUser()
+    public function getAdminUser(): User
     {
         return User::where('email', 'ibaiminiaturas@gmail.com')->first();
+    }
+
+    public function createTeam(int $coachId)
+    {
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'coach_id' => $coachId,
+            'roster_id' => Roster::first()->id,
+            'gold_remaining' => 1000000,
+            'team_value' => 100000
+        ]
+        );
+        return $response;
     }
 
 }

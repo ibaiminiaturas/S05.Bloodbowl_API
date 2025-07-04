@@ -49,16 +49,7 @@ class TeamsRetrieveTest extends TestCase
         Passport::actingAs($admin);
         $coach = $this->DeleteUserAndCreate();
 
-        $response = $this->postJson(
-            '/api/teams',
-            [
-            'name' => 'Test team',
-            'coach_id' => $coach->id,
-            'roster_id' => Roster::first()->id,
-            'gold_remaining' => 1000000,
-            'team_value' => 100000
-            ]
-        );
+        $response = $this->createTeam($coach->id);
 
         $response->assertStatus(201);
 
@@ -81,16 +72,7 @@ class TeamsRetrieveTest extends TestCase
         Passport::actingAs($admin);
         $coach = $this->DeleteUserAndCreate();
 
-        $response = $this->postJson(
-            '/api/teams',
-            [
-            'name' => 'Test team',
-            'coach_id' => $coach->id,
-            'roster_id' => Roster::first()->id,
-            'gold_remaining' => 1000000,
-            'team_value' => 100000
-            ]
-        );
+        $response = $this->createTeam($coach->id);
 
         $response->assertStatus(201);
 
@@ -114,16 +96,7 @@ class TeamsRetrieveTest extends TestCase
         Passport::actingAs($admin);
         $coach = $this->DeleteUserAndCreate();
 
-        $response = $this->postJson(
-            '/api/teams',
-            [
-            'name' => 'Test team',
-            'coach_id' => $coach->id,
-            'roster_id' => Roster::first()->id,
-            'gold_remaining' => 1000000,
-            'team_value' => 100000
-            ]
-        );
+        $response = $this->createTeam($coach->id);
 
         $response->assertStatus(201);
 

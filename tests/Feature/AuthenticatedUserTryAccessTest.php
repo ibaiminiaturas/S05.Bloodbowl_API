@@ -5,16 +5,27 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Laravel\Passport\Passport;
+use App\Models\User;
+use Tests\Traits\UtilsForTesting;
 
 class AuthenticatedUserTryAccessTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
+    use UtilsForTesting;
+
+    public function test_authenticated_user_can_access_user_route(): void
     {
-        $response = $this->get('/');
+        $admin = $this->getAdminUser();
+
+        Passport::actingAs($admin);
+
+
+        $response = $this->getJson('/api/user');
 
         $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $admin->id,
+            'email' => $admin->email,
+        ]);
     }
 }
