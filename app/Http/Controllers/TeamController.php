@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Team;
-use Illuminate\Http\Request;
-use App\Http\Requests\UserLoginRequest;
+use App\Http\Requests\TeamCreationRequest;
 
 class TeamController extends Controller
 {
-    public function store(UserLoginRequest $request)
+    public function store(TeamCreationRequest $request)
     {
         $validated = $request->validated();
 

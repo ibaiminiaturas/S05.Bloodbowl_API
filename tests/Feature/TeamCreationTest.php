@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Roster;
+use App\Models\Team;
 use Laravel\Passport\Passport;
 use Tests\Traits\UtilsForTesting;
 
@@ -16,9 +17,9 @@ class TeamCreationTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_admin_useer_can_create_team(): void
+    public function test_admin_user_can_create_team(): void
     {
-        $this->withoutExceptionHandling();
+
         $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
 
         Passport::actingAs($user);
@@ -30,12 +31,141 @@ class TeamCreationTest extends TestCase
             [
             'name' => 'Test team',
             'coach_id' => $coach->id,
-            'rooter_id' => Roster::first()->id,
+            'roster_id' => Roster::first()->id,
             'gold_remaining' => 1000000,
             'team_value' => 100000
         ]
         );
 
-        $response->assertStatus(200);
+        Team::where('name', '=', 'Test team')->delete();
+
+        $response->assertStatus(201);
     }
+
+
+    public function test_coach_user_can_not_create_team(): void
+    {
+
+        $coach = $this->DeleteUserAndCreate();
+        Passport::actingAs($coach);
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'coach_id' => $coach->id,
+            'roster_id' => Roster::first()->id,
+            'gold_remaining' => 1000000,
+            'team_value' => 100000
+        ]
+        );
+
+        $response->assertStatus(403);
+    }
+
+    public function test_field_checks(): void
+    {
+        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+
+        Passport::actingAs($user);
+
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'coach_id' => $user->id,
+            'roster_id' => Roster::first()->id,
+            'gold_remaining' => 1000000,
+            'team_value' => 100000
+        ]
+        );
+
+        $response->assertStatus(422);
+
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'roster_id' => Roster::first()->id,
+            'gold_remaining' => 1000000,
+            'team_value' => 100000
+        ]
+        );
+
+        $response->assertStatus(422);
+
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'coach_id' => $user->id,
+            'gold_remaining' => 1000000,
+            'team_value' => 100000
+        ]
+        );
+
+        $response->assertStatus(422);
+
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'coach_id' => $user->id,
+            'roster_id' => Roster::first()->id,
+            'team_value' => 100000
+        ]
+        );
+
+        $response->assertStatus(422);
+
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'coach_id' => $user->id,
+            'roster_id' => Roster::first()->id,
+            'gold_remaining' => 1000000,
+        ]
+        );
+
+        $response->assertStatus(422);
+    }
+
+    public function test_duplicated_team_name_can_not_be_created(): void
+    {
+
+        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+
+        Passport::actingAs($user);
+
+        $coach = $this->DeleteUserAndCreate();
+
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'coach_id' => $coach->id,
+            'roster_id' => Roster::first()->id,
+            'gold_remaining' => 1000000,
+            'team_value' => 100000
+        ]
+        );
+        $response->assertStatus(201);
+
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'coach_id' => $coach->id,
+            'roster_id' => Roster::first()->id,
+            'gold_remaining' => 1000000,
+            'team_value' => 100000
+        ]
+        );
+
+        $response->assertStatus(422);
+
+        Team::where('name', '=', 'Test team')->delete();
+
+
+    }
+
 }
