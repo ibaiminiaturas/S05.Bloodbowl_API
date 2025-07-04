@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\RosterController;
 use App\Http\Controllers\CoachController;
+use App\Http\Controllers\TeamController;
 
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
@@ -19,6 +20,7 @@ Route::middleware(['auth:api', 'token.revoked', 'role:admin'])->group(function (
     });
 
     Route::get('/coaches', [CoachController::class, 'index']);
+    Route::post('/teams', [TeamController::class, 'store']);
 
 
 });

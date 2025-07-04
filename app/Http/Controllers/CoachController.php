@@ -23,7 +23,13 @@ class CoachController extends Controller
     public function show(User $coach)
     {
         if ($coach->hasRole('coach')) {
-            return response()->json(['data' => $coach]);
+            return response()->json(['data' => [
+                'id' => $coach->id,
+                'name' => $coach->name,
+                'email' => $coach->email,
+                'created_at' => $coach->created_at,
+                'updated_at' => $coach->updated_at, ]
+        ]);
         } else {
             return response()->json(404);
         }
