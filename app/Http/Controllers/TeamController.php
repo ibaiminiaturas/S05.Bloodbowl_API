@@ -6,6 +6,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Http\Requests\TeamCreationRequest;
 use App\Http\Requests\TeamUpdateRequest;
+use App\Http\Requests\Request;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,16 +35,6 @@ class TeamController extends Controller
 
         $user = User::with('roles')->find(Auth::id());
 
-        /**$userRoles = $user->roles->pluck('name')->toArray();
-        $isCoach = in_array('coach', $userRoles);
-        $isAdmin = in_array('admin', $userRoles);
-
-        if ($isAdmin || ($isCoach && $team->coach_id == $user->id)) {
-            $team->update([
-                'gold_remaining' => $validated['gold_remaining'],
-                'team_value' => $validated['team_value'],
-        ]); */
-
         if ($user->hasRole('admin') || ($user->hasRole('coach') && $team->coach_id == $user->id)) {
             $team->update([
                 'name' => $validated['name'],
@@ -54,5 +45,22 @@ class TeamController extends Controller
             return response()->json($team, 403);
         }
 
+    }
+
+    public function index()
+    {
+        $teams = Team::with(['coach', 'roster'])->get();
+        return response()->json(['data' => $teams]);
+    }
+
+    public function show(Team $team)
+    {
+        $user = User::with('roles')->find(Auth::id());
+
+        if ($user->hasRole('admin') || ($user->hasRole('coach') && $team->coach_id == $user->id)) {
+            return response()->json(['data' => $team], 200);
+        } else {
+            return response()->json(['data' => $team], 403);
+        }
     }
 }
