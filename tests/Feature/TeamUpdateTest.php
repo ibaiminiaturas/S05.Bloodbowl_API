@@ -39,6 +39,8 @@ class TeamUpdateTest extends TestCase
 
         $team = Team::where('name', 'Test team')->first();
 
+        Passport::actingAs($user);
+
         $response->assertStatus(201);
 
         $response = $this->putJson(
@@ -49,6 +51,8 @@ class TeamUpdateTest extends TestCase
             ]
         );
 
+        $response->assertStatus(200);
+
         $team->delete();
     }
 
@@ -57,7 +61,6 @@ class TeamUpdateTest extends TestCase
         $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
         Passport::actingAs($user);
         $coach = $this->DeleteUserAndCreate();
-        //Passport::actingAs($coach);
 
         $response = $this->postJson(
             '/api/teams',
@@ -84,6 +87,45 @@ class TeamUpdateTest extends TestCase
             ]
         );
 
-        //$team->delete();
+        $response->assertStatus(200);
+
+        $team->delete();
+    }
+
+    public function test_coach_user_can_not_update_a_team_is_not_theirs(): void
+    {
+        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        Passport::actingAs($user);
+        $coach = $this->DeleteUserAndCreate();
+
+        $response = $this->postJson(
+            '/api/teams',
+            [
+            'name' => 'Test team',
+            'coach_id' => $coach->id,
+            'roster_id' => Roster::first()->id,
+            'gold_remaining' => 1000000,
+            'team_value' => 100000
+        ]
+        );
+
+        $response->assertStatus(201);
+
+        $team = Team::where('name', 'Test team')->first();
+        $coach2 = $this->DeleteUserAndCreate(true, 'another_user@gmail.com');
+        Passport::actingAs($coach2);
+
+        $response = $this->putJson(
+            '/api/teams/'. $team->id,
+            [
+                'gold_remaining' => 1000011,
+                'team_value' => 100011
+            ]
+        );
+
+        $response->assertStatus(403);
+        $coach2->delete();
+        $coach->delete();
+        $team->delete();
     }
 }

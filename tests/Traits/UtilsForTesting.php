@@ -8,16 +8,16 @@ use Spatie\Permission\Models\Role;
 
 trait UtilsForTesting
 {
-    public function DeleteUserAndCreate(bool $coachRole = true): User
+    public function DeleteUserAndCreate(bool $coachRole = true, string $email =  'ibai@example.com'): User
     {
-        $user = User::firstWhere('email', 'ibai@example.com');
+        $user = User::firstWhere('email', $email);
 
         if ($user != null) {
             $user->delete();
         }
 
         $new_user = User::factory()->create([
-            'email' => 'ibai@example.com',
+            'email' => $email,
             'password' => Hash::make('secret123'),
         ]);
 
