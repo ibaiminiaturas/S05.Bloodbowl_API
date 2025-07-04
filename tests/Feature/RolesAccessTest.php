@@ -9,7 +9,6 @@ use App\Models\User;
 use Laravel\Passport\Passport;
 use Tests\Traits\UtilsForTesting;
 
-
 class RolesAccessTest extends TestCase
 {
     use UtilsForTesting;
@@ -18,9 +17,9 @@ class RolesAccessTest extends TestCase
      */
     public function test_user_admin_can_access_to_users_table(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        $admin = $this->getAdminUser();
 
-        Passport::actingAs($user);
+        Passport::actingAs($admin);
 
         $response = $this->getJson('/api/user');
 
@@ -57,9 +56,9 @@ class RolesAccessTest extends TestCase
 
     public function test_admin_user_can_access_coach_role_funcionalities(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        $admin = $this->getAdminUser();
 
-        Passport::actingAs($user);
+        Passport::actingAs($admin);
 
         $response = $this->getJson('/api/skills');
 

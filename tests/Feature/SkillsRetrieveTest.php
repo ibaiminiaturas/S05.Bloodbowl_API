@@ -10,22 +10,33 @@ use Laravel\Passport\Passport;
 use Tests\Traits\UtilsForTesting;
 use App\Models\Skill;
 
-
 class SkillsRetrieveTest extends TestCase
 {
-        use UtilsForTesting;
+    use UtilsForTesting;
     /**
      * A basic feature test example.
      */
     public function test_any_user_can_retireve_skills(): void
     {
+        $admin = $this->getAdminUser();
 
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        Passport::actingAs($admin);
+        $response = $this->getJson('/api/skills');
+
+        $response->assertStatus(200);
+
+        $data = $response->json();
+        $this->assertNotEmpty($data);
+
+        $this->assertEquals(count($data['data']), Skill::count());
+
+
+        $user = $this->DeleteUserAndCreate();
 
         Passport::actingAs($user);
         $response = $this->getJson('/api/skills');
-        
-        $response->assertStatus(200);        
+
+        $response->assertStatus(200);
 
         $data = $response->json();
         $this->assertNotEmpty($data);

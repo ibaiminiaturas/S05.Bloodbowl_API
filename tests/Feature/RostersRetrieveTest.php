@@ -11,20 +11,17 @@ use Laravel\Passport\Passport;
 use Tests\Traits\UtilsForTesting;
 use App\Models\Skill;
 
-
 class RostersRetrieveTest extends TestCase
 {
-        use UtilsForTesting;
+    use UtilsForTesting;
     /**
      * A basic feature test example.
      */
     public function test_admin_user_can_retireve_rosters(): void
     {
-
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
-
-        Passport::actingAs($user);
-         $this->getRostersAndCheck();
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
+        $this->getRostersAndCheck();
     }
 
 
@@ -44,8 +41,8 @@ class RostersRetrieveTest extends TestCase
     public function getRostersAndCheck()
     {
         $response = $this->getJson('/api/rosters');
-        
-        $response->assertStatus(200);        
+
+        $response->assertStatus(200);
 
         $data = $response->json();
         $this->assertNotEmpty($data);

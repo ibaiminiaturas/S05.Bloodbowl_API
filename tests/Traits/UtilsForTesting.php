@@ -32,4 +32,9 @@ trait UtilsForTesting
 
     }
 
+    public function getAdminUser()
+    {
+        return User::where('email', 'ibaiminiaturas@gmail.com')->first();
+    }
+
 }

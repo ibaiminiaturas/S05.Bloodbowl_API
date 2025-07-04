@@ -20,9 +20,9 @@ class TeamCreationTest extends TestCase
     public function test_admin_user_can_create_team(): void
     {
 
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        $admin = $this->getAdminUser();
 
-        Passport::actingAs($user);
+        Passport::actingAs($admin);
 
         $coach = $this->DeleteUserAndCreate();
 
@@ -45,9 +45,9 @@ class TeamCreationTest extends TestCase
 
     public function test_coach_user_can_not_create_team(): void
     {
-
         $coach = $this->DeleteUserAndCreate();
         Passport::actingAs($coach);
+
         $response = $this->postJson(
             '/api/teams',
             [
@@ -64,14 +64,14 @@ class TeamCreationTest extends TestCase
 
     public function test_field_checks(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        $admin = $this->getAdminUser();
 
-        Passport::actingAs($user);
+        Passport::actingAs($admin);
 
         $response = $this->postJson(
             '/api/teams',
             [
-            'coach_id' => $user->id,
+            'coach_id' => $admin->id,
             'roster_id' => Roster::first()->id,
             'gold_remaining' => 1000000,
             'team_value' => 100000
@@ -96,7 +96,7 @@ class TeamCreationTest extends TestCase
             '/api/teams',
             [
             'name' => 'Test team',
-            'coach_id' => $user->id,
+            'coach_id' => $admin->id,
             'gold_remaining' => 1000000,
             'team_value' => 100000
         ]
@@ -108,7 +108,7 @@ class TeamCreationTest extends TestCase
             '/api/teams',
             [
             'name' => 'Test team',
-            'coach_id' => $user->id,
+            'coach_id' => $admin->id,
             'roster_id' => Roster::first()->id,
             'team_value' => 100000
         ]
@@ -120,7 +120,7 @@ class TeamCreationTest extends TestCase
             '/api/teams',
             [
             'name' => 'Test team',
-            'coach_id' => $user->id,
+            'coach_id' => $admin->id,
             'roster_id' => Roster::first()->id,
             'gold_remaining' => 1000000,
         ]
@@ -132,9 +132,9 @@ class TeamCreationTest extends TestCase
     public function test_duplicated_team_name_can_not_be_created(): void
     {
 
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        $admin = $this->getAdminUser();
 
-        Passport::actingAs($user);
+        Passport::actingAs($admin);
 
         $coach = $this->DeleteUserAndCreate();
 
@@ -163,9 +163,7 @@ class TeamCreationTest extends TestCase
 
         $response->assertStatus(422);
 
-        Team::where('name', '=', 'Test team')->delete();
-
-
+        Team::where('name', 'Test team')->delete();
     }
 
 }

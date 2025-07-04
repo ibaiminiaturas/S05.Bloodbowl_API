@@ -19,9 +19,8 @@ class TeamsRetrieveTest extends TestCase
      */
     public function test_admin_can_retrieve_all_teams(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
-
-        Passport::actingAs($user);
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
 
         $response = $this->getJson('/api/teams');
 
@@ -46,8 +45,8 @@ class TeamsRetrieveTest extends TestCase
 
     public function test_admin_can_retrieve_one_team(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
-        Passport::actingAs($user);
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
         $coach = $this->DeleteUserAndCreate();
 
         $response = $this->postJson(
@@ -78,8 +77,8 @@ class TeamsRetrieveTest extends TestCase
 
     public function test_coach_can_retrieve_one_team_of_theirs(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
-        Passport::actingAs($user);
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
         $coach = $this->DeleteUserAndCreate();
 
         $response = $this->postJson(
@@ -111,8 +110,8 @@ class TeamsRetrieveTest extends TestCase
 
     public function test_coach_can_not_retrieve_one_team_not_of_theirs(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
-        Passport::actingAs($user);
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
         $coach = $this->DeleteUserAndCreate();
 
         $response = $this->postJson(

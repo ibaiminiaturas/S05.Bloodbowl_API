@@ -19,9 +19,8 @@ class CoachesInfoRetrieveTest extends TestCase
      */
     public function test_admin_can_get_all_coaches(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
-
-        Passport::actingAs($user);
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
 
         $response = $this->getJson('/api/coaches');
 
@@ -54,7 +53,7 @@ class CoachesInfoRetrieveTest extends TestCase
 
     public function test_admin_user_can_get_one_coach(): void
     {
-        $admin = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        $admin = $this->getAdminUser();
 
         Passport::actingAs($admin);
 
