@@ -13,9 +13,9 @@ class PlayerTypeBelongsToRoster implements ValidationRule
 {
     protected int $teamId;
 
-    public function __construct(int $teamId)
+    public function __construct(string $teamId)
     {
-        $this->teamId = $teamId;
+        $this->teamId = intval($teamId);
     }
     /**
      * Run the validation rule.
@@ -24,7 +24,7 @@ class PlayerTypeBelongsToRoster implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-       $team = Team::find($this->teamId);
+        $team = Team::find($this->teamId);
         $playerType = PlayerType::find($value);
 
         if (!$team || !$playerType) {
@@ -39,7 +39,7 @@ class PlayerTypeBelongsToRoster implements ValidationRule
         }
 
         if ($teamRoster->id != $playerType->roster_id) {
-$fail('The type of player does not belong to the team roster.');
+            $fail('The type of player does not belong to the team roster.');
         }
     }
 }

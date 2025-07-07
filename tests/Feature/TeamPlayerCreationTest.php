@@ -13,7 +13,6 @@ use App\Models\TeamPlayer;
 use Laravel\Passport\Passport;
 use Tests\Traits\UtilsForTesting;
 
-
 class TeamPlayerCreationTest extends TestCase
 {
     use UtilsForTesting;
@@ -26,30 +25,27 @@ class TeamPlayerCreationTest extends TestCase
         $response = $this->createTeam($coach->id);
         $team = Team::where('name', 'Test team')->first();
 
-        if ($coachCreatesPlayer)
-        {
+        if ($coachCreatesPlayer) {
             Passport::actingAs($coach);
         }
-        
-        if ($rosterNew)
-        {
+
+        if ($rosterNew) {
             $playerType = 33;
-        }
-        else
-        {
+        } else {
             $playerType = 1;
         }
 
-        $response = $this->postJson('/api/teams/'. $team->id . '/players',
-        [
+        $response = $this->postJson(
+            '/api/teams/'. $team->id . '/players',
+            [
             'name' => 'Test Player',
-            'team_id' => $team->id,
             'player_type_id' => $playerType,
             'player_number' => 1,
             'injuries' => '',
             'spp' => 2
-        
-        ]);
+
+        ]
+        );
 
         return $response;
     }
@@ -101,16 +97,17 @@ class TeamPlayerCreationTest extends TestCase
         $response = $this->createPlayer(true);
         $response->assertStatus(201);
         $team = Team::where('name', 'Test team')->first();
-        $response = $this->postJson('/api/teams/'. $team->id . '/players',
-        [
+        $response = $this->postJson(
+            '/api/teams/'. $team->id . '/players',
+            [
             'name' => 'Test Player',
-            'team_id' => $team->id,
             'player_type_id' => $team->roster_id,
-            'player_number' =>2,
+            'player_number' => 2,
             'injuries' => '',
             'spp' => 2
-        
-        ]);
+
+        ]
+        );
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('name');
@@ -125,19 +122,19 @@ class TeamPlayerCreationTest extends TestCase
     public function test_coach_can_not_create_player_with_same_number(): void
     {
         $response = $this->createPlayer(true);
-
         $response->assertStatus(201);
         $team = Team::where('name', 'Test team')->first();
-        $response = $this->postJson('/api/teams/'. $team->id . '/players',
-        [
+        $response = $this->postJson(
+            '/api/teams/'. $team->id . '/players',
+            [
             'name' => 'Test Player 2',
-            'team_id' => $team->id,
             'player_type_id' => PlayerType::where('roster_id', $team->roster_id)->first()->id,
             'player_number' => 1,
             'injuries' => '',
             'spp' => 2
-        
-        ]);
+
+        ]
+        );
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('player_number');
@@ -153,6 +150,34 @@ class TeamPlayerCreationTest extends TestCase
     public function test_coach_can_not_create_player_into_team_that_is_not_theirs(): void
     {
 
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
+        $coach = $this->DeleteUserAndCreate(true);
+        $response = $this->createTeam($coach->id);
+
+        $coach_2 = $this->DeleteUserAndCreate(true, 'another_email@gmail.com');
+        $response = $this->createTeam($coach_2->id, 'another team');
+        $team_2 = Team::where('name', 'another team')->first();
+
+        Passport::actingAs($coach);
+
+        $response = $this->postJson(
+            '/api/teams/'. $team_2->id . '/players',
+            [
+            'name' => 'Test Player',
+            'player_type_id' => 1,
+            'player_number' => 1,
+            'injuries' => '',
+            'spp' => 2
+        ]
+        );
+
+        $response->assertJsonValidationErrors('team_id');
+        $response->assertJsonFragment([
+            'errors' => [
+                'team_id' => ['The team does not belong to the user.'],
+            ],
+        ]);
     }
 
     public function test_coach_can_not_create_player_because_has_not_enough_gold(): void

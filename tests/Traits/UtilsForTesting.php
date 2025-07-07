@@ -30,7 +30,6 @@ trait UtilsForTesting
             $new_user->assignRole($role);
         }
         return $new_user;
-
     }
 
     public function getAdminUser(): User
@@ -38,12 +37,12 @@ trait UtilsForTesting
         return User::where('email', 'ibaiminiaturas@gmail.com')->first();
     }
 
-    public function createTeam(int $coachId)
+    public function createTeam(int $coachId, string $team_name = 'Test team')
     {
         $response = $this->postJson(
             '/api/teams',
             [
-            'name' => 'Test team',
+            'name' => $team_name,
             'coach_id' => $coachId,
             'roster_id' => Roster::first()->id,
             'gold_remaining' => 1000000,
