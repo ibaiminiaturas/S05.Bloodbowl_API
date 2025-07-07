@@ -27,15 +27,13 @@ class RostersRetrieveTest extends TestCase
 
     public function test_not_admin_user_can_retireve_rosters(): void
     {
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
-        Passport::actingAs($user);
+        Passport::actingAs($coach);
 
         $this->getRostersAndCheck();
+        $coach->delete();
 
-        if ($user != null) {
-            $user->delete();
-        }
     }
 
     public function getRostersAndCheck()
