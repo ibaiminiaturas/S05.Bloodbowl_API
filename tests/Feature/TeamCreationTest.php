@@ -24,24 +24,26 @@ class TeamCreationTest extends TestCase
 
         Passport::actingAs($admin);
 
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->createTeam($coach->id);
 
         $response->assertStatus(201);
 
-        Team::where('name', 'Test team')->delete();
+        $coach->delete();
     }
 
 
     public function test_coach_user_can_not_create_team(): void
     {
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
         Passport::actingAs($coach);
 
         $response = $this->createTeam($coach->id);
 
         $response->assertStatus(403);
+
+        $coach->delete();
     }
 
     public function test_field_checks(): void
@@ -113,12 +115,11 @@ class TeamCreationTest extends TestCase
 
     public function test_duplicated_team_name_can_not_be_created(): void
     {
-
         $admin = $this->getAdminUser();
 
         Passport::actingAs($admin);
 
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->createTeam($coach->id);
 
@@ -128,7 +129,7 @@ class TeamCreationTest extends TestCase
 
         $response->assertStatus(422);
 
-        Team::where('name', 'Test team')->delete();
+        $coach->delete();
     }
 
 }
