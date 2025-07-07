@@ -19,9 +19,9 @@ class RosterDataRetrieveTest extends TestCase
      */
     public function test_user_coach_can_retrieve_one_roster_data(): void
     {
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
-        Passport::actingAs($user);
+        Passport::actingAs($coach);
 
         $response = $this->getJson('/api/rosters/1');
 
@@ -32,13 +32,13 @@ class RosterDataRetrieveTest extends TestCase
         $this->assertNotEmpty($data);
 
         $playerTypesFromRoster = Roster::findOrFail(1)->playerTypes;
-        
+
         $this->assertNotEmpty($playerTypesFromRoster);
 
         $this->assertEquals(count($data['data']), count($playerTypesFromRoster));
 
-        $user->delete();
+        $coach->delete();
 
-        
+
     }
 }
