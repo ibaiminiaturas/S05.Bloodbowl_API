@@ -56,9 +56,10 @@ trait UtilsForTesting
 
     private function createPlayer(bool $coachCreatesPlayer = false, bool $rosterNew = false)
     {
+        Team::query()->delete();
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
         $response = $this->createTeam($coach->id);
         $team = Team::where('name', 'Test team')->first();
 

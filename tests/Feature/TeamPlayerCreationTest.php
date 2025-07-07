@@ -17,18 +17,10 @@ class TeamPlayerCreationTest extends TestCase
 {
     use UtilsForTesting;
 
-
-
-
     public function test_admin_can_create_player_into_team(): void
     {
-        $this->withoutExceptionHandling();
         $response = $this->createPlayer();
         $response->assertStatus(201);
-        $player = TeamPlayer::where('name', 'Test Player')->delete();
-        $response->assertStatus(201);
-
-
     }
 
 
@@ -45,6 +37,7 @@ class TeamPlayerCreationTest extends TestCase
 
     public function test_coach_can_create_player_into_team(): void
     {
+        TeamPlayer::query()->delete();
         $response = $this->createPlayer(true);
         $response->assertStatus(201);
 
@@ -52,7 +45,7 @@ class TeamPlayerCreationTest extends TestCase
 
     public function test_coach_can_not_create_player_into_team_from_different_roster(): void
     {
-
+        TeamPlayer::query()->delete();
         $response = $this->createPlayer(false, true);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('player_type_id');
@@ -64,9 +57,11 @@ class TeamPlayerCreationTest extends TestCase
 
     public function test_coach_can_not_create_player_with_same_name(): void
     {
+        TeamPlayer::query()->delete();
         $response = $this->createPlayer(true);
         $response->assertStatus(201);
         $team = Team::where('name', 'Test team')->first();
+
         $response = $this->postJson(
             '/api/teams/'. $team->id . '/players',
             [
@@ -91,6 +86,7 @@ class TeamPlayerCreationTest extends TestCase
 
     public function test_coach_can_not_create_player_with_same_number(): void
     {
+        TeamPlayer::query()->delete();
         $response = $this->createPlayer(true);
         $response->assertStatus(201);
         $team = Team::where('name', 'Test team')->first();
@@ -119,12 +115,13 @@ class TeamPlayerCreationTest extends TestCase
 
     public function test_coach_can_not_create_player_into_team_that_is_not_theirs(): void
     {
+        TeamPlayer::query()->delete();
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate(true);
+        $coach = User::factory()->coach()->create();
         $response = $this->createTeam($coach->id);
 
-        $coach_2 = $this->DeleteUserAndCreate(true, 'another_email@gmail.com');
+        $coach_2 = User::factory()->coach()->create();
         $response = $this->createTeam($coach_2->id, 'another team');
         $team_2 = Team::where('name', 'another team')->first();
 
@@ -148,10 +145,14 @@ class TeamPlayerCreationTest extends TestCase
                 'team_id' => ['The team does not belong to the user.'],
             ],
         ]);
+
+        $coach->delete();
+        $coach_2->delete();
     }
 
     public function test_coach_can_not_create_player_because_has_not_enough_gold(): void
     {
+        TeamPlayer::query()->delete();
         $response = $this->createPlayer(true);
         $response->assertStatus(201);
         $team = Team::where('name', 'Test team')->first();
@@ -180,19 +181,20 @@ class TeamPlayerCreationTest extends TestCase
 
     }
 
-    public function test_coach_can_not_create_player_because_has_not_enough_spots_for_taht_player_type(): void
+    public function test_coach_can_not_create_player_because_has_not_enough_spots_for_that_player_type(): void
     {
         TeamPlayer::query()->delete();
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
         $response = $this->createTeam($coach->id);
         $team = Team::where('name', 'Test team')->first();
 
         $playerType = PlayerType::where('roster_id', $team->roster_id)
             ->orderBy('max_per_team', 'asc')
             ->first();
-
+        $team->gold_remaining = 100000000;
+        $team->save();
         for ($i = 0; $i < $playerType->max_per_team; $i++) {
             $response = $this->postJson(
                 '/api/teams/' . $team->id . '/players',
@@ -227,7 +229,7 @@ class TeamPlayerCreationTest extends TestCase
             ],
         ]);
 
-
+        $coach->delete();
     }
 
 }
