@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\TeamPlayerCreationRequest;
 use App\Models\TeamPlayer;
+use App\Models\PlayerType;
+use App\Models\Team;
 
 class TeamPlayerController extends Controller
 {
@@ -20,6 +22,16 @@ class TeamPlayerController extends Controller
             'injuries' => $validated['injuries'],
             'spp' => $validated['spp'],
         ]);
+
+
+        $gold = PlayerType::findOrFail($validated['player_type_id'])->cost;
+
+        
+        $team = Team::findOrFail( $validated['team_id']);
+
+        $team->gold_remaining = $team->gold_remaining - $gold;
+
+        $team->save();
 
         return response()->json($teamPlayer, 201);
 

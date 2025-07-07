@@ -40,8 +40,37 @@ class TeamPlayerCreationTest extends TestCase
 
         $response->assertStatus(201);
 
+
+        $player = TeamPlayer::where('name', 'Test Player')->delete();
+        $response->assertStatus(201);
+    }
+
+
+    public function test_admin_can_not_create_player_into_team_from_different_roster(): void
+    {
+        $this->withoutExceptionHandling();
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
+        $coach = $this->DeleteUserAndCreate();
+        $response = $this->createTeam($coach->id);
+        $team = Team::where('name', 'Test team')->first();
+
+        $response = $this->postJson('/api/teams/'. $team->id . '/players',
+        [
+            'name' => 'Test Player',
+            'team_id' => $team->id,
+            'player_type_id' => PlayerType::where('roster_id', $team->roster_id)->first()->id,
+            'player_number' => 1,
+            'injuries' => '',
+            'spp' => 2
+        
+        ]);
+
+        $response->assertStatus(201);
+
         
         $player = TeamPlayer::where('name', 'Test Player')->delete();
         $response->assertStatus(201);
     }
+
 }
