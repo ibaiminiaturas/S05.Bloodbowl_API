@@ -1,19 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Validation\ValidationException;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\TeamPlayerCreationRequest;
 use App\Models\TeamPlayer;
 use App\Models\PlayerType;
 use App\Models\Team;
+use App\Models\Roster;
 
 class TeamPlayerController extends Controller
 {
  public function store(TeamPlayerCreationRequest $request)
     {
         $validated = $request->validated();
-
+        
         $teamPlayer = TeamPlayer::create([
             'name' => $validated['name'],
             'team_id' => $validated['team_id'],
@@ -25,7 +27,6 @@ class TeamPlayerController extends Controller
 
 
         $gold = PlayerType::findOrFail($validated['player_type_id'])->cost;
-
         
         $team = Team::findOrFail( $validated['team_id']);
 

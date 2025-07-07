@@ -43,12 +43,13 @@ class TeamPlayerCreationTest extends TestCase
 
         $player = TeamPlayer::where('name', 'Test Player')->delete();
         $response->assertStatus(201);
+        $team->delete();
     }
 
 
     public function test_admin_can_not_create_player_into_team_from_different_roster(): void
     {
-        $this->withoutExceptionHandling();
+        
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
         $coach = $this->DeleteUserAndCreate();
@@ -59,18 +60,19 @@ class TeamPlayerCreationTest extends TestCase
         [
             'name' => 'Test Player',
             'team_id' => $team->id,
-            'player_type_id' => PlayerType::where('roster_id', $team->roster_id)->first()->id,
+            'player_type_id' => PlayerType::where('roster_id', 3)->first()->id,
             'player_number' => 1,
             'injuries' => '',
             'spp' => 2
         
         ]);
 
-        $response->assertStatus(201);
-
-        
-        $player = TeamPlayer::where('name', 'Test Player')->delete();
-        $response->assertStatus(201);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('player_type_id');
+        $response->assertJsonFragment([
+            'player_type_id' => ['The type of player does not belong to the team roster.'],
+        ]);
+        $coach->delete();
     }
 
 }
