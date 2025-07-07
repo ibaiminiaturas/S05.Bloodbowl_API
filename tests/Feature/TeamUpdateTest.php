@@ -19,6 +19,7 @@ class TeamUpdateTest extends TestCase
      */
     public function test_admin_user_can_update_team(): void
     {
+        Team::query()->delete();
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
 
@@ -48,6 +49,7 @@ class TeamUpdateTest extends TestCase
 
     public function test_coach_user_can_update_his_team(): void
     {
+        Team::query()->delete();
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
         $coach = User::factory()->coach()->create();
@@ -76,6 +78,7 @@ class TeamUpdateTest extends TestCase
 
     public function test_coach_user_can_not_update_a_team_is_not_theirs(): void
     {
+        Team::query()->delete();
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
         $coach = User::factory()->coach()->create();
