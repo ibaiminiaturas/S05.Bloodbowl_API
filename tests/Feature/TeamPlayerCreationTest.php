@@ -103,7 +103,7 @@ class TeamPlayerCreationTest extends TestCase
         $response = $this->createTeam($coach->id);
         $team = Team::where('name', 'Test team')->first();
         Passport::actingAs($coach);
-        
+
         $response = $this->postJson('/api/teams/'. $team->id . '/players',
         [
             'name' => 'Test Player',
@@ -122,5 +122,52 @@ class TeamPlayerCreationTest extends TestCase
         ]);
         $coach->delete();
     }
+
+    public function test_coach_can_not_create_player_with_same_name(): void
+    {
+
+        //$this->withoutExceptionHandling();
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
+        $coach = $this->DeleteUserAndCreate();
+        $response = $this->createTeam($coach->id);
+        $team = Team::where('name', 'Test team')->first();
+        Passport::actingAs($coach);
+
+        $response = $this->postJson('/api/teams/'. $team->id . '/players',
+        [
+            'name' => 'Test Player',
+            'team_id' => $team->id,
+            'player_type_id' => PlayerType::where('roster_id', $team->roster_id)->first()->id,
+            'player_number' => 1,
+            'injuries' => '',
+            'spp' => 2
+        
+        ]);
+
+        $response->assertStatus(201);
+
+        $response = $this->postJson('/api/teams/'. $team->id . '/players',
+        [
+            'name' => 'Test Player',
+            'team_id' => $team->id,
+            'player_type_id' => PlayerType::where('roster_id', $team->roster_id)->first()->id,
+            'player_number' => 2,
+            'injuries' => '',
+            'spp' => 2
+        
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('name');
+        $response->assertJsonFragment([
+            'errors' => [
+                'name' => ['The name has already been taken.'],
+            ],
+        ]);
+
+        $coach->delete();
+    }
+
 
 }
