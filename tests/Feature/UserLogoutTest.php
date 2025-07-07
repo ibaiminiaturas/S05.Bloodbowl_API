@@ -7,15 +7,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\Traits\UtilsForTesting;
 
-
 class UserLogoutTest extends TestCase
 {
     use UtilsForTesting;
 
     public function test_user_can_logout()
     {
-        $user = $this->DeleteUserAndCreate();
-        $token = $user->createToken('TestToken')->accessToken;
+        $coach = User::factory()->coach()->create();
+        $token = $coach->createToken('TestToken')->accessToken;
 
         // Logout
         $response = $this->withHeaders([
