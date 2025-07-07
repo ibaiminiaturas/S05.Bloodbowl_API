@@ -17,38 +17,7 @@ class TeamPlayerCreationTest extends TestCase
 {
     use UtilsForTesting;
 
-    private function createPlayer(bool $coachCreatesPlayer = false, bool $rosterNew = false)
-    {
-        $admin = $this->getAdminUser();
-        Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate();
-        $response = $this->createTeam($coach->id);
-        $team = Team::where('name', 'Test team')->first();
 
-        if ($coachCreatesPlayer) {
-            Passport::actingAs($coach);
-        }
-
-        if ($rosterNew) {
-            $playerType = 33;
-        } else {
-            $playerType = 1;
-        }
-
-        $response = $this->postJson(
-            '/api/teams/'. $team->id . '/players',
-            [
-            'name' => 'Test Player',
-            'player_type_id' => $playerType,
-            'player_number' => 1,
-            'injuries' => '',
-            'spp' => 2
-
-        ]
-        );
-
-        return $response;
-    }
 
 
     public function test_admin_can_create_player_into_team(): void
@@ -172,6 +141,7 @@ class TeamPlayerCreationTest extends TestCase
         ]
         );
 
+        $response->assertStatus(422);
         $response->assertJsonValidationErrors('team_id');
         $response->assertJsonFragment([
             'errors' => [

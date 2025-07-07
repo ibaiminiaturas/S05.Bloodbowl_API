@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Http\Requests\TeamPlayerCreationRequest;
+use App\Http\Requests\TeamPlayerUpdateRequest;
 use App\Models\TeamPlayer;
 use App\Models\PlayerType;
 use App\Models\Team;
@@ -33,6 +34,22 @@ class TeamPlayerController extends Controller
         $team->save();
 
         return response()->json($teamPlayer, 201);
+
+    }
+
+    public function update(TeamPlayerUpdateRequest $request, TeamPlayer $teamPlayer)
+    {
+        $validated = $request->validated();
+
+        $teamPlayer->update([
+            'injuries' => $validated['injuries'],
+            'spp' => $validated['spp'],
+        ]);
+
+        return response()->json([
+            'message' => 'Player updated successfully',
+            'player' => $teamPlayer->id,
+        ], 200);
 
     }
 }
