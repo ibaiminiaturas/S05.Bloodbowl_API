@@ -37,4 +37,5 @@ Route::middleware(['auth:api', 'token.revoked', 'role:admin|coach'])->group(func
     Route::get('/teams/{team}', [TeamController::class, 'show']);
     Route::post('/teams/{team}/players', [TeamPlayerController::class, 'store']);
     Route::put('/players/{teamPlayer}', [TeamPlayerController::class, 'update']);
+    Route::delete('/players/{teamPlayer}', [TeamPlayerController::class, 'delete']);
 });

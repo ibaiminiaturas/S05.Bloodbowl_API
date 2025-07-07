@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Http\Requests\TeamPlayerCreationRequest;
-use App\Http\Requests\TeamPlayerUpdateRequest;
+use App\Http\Requests\TeamPlayerUpdateDeleteRequest;
 use App\Models\TeamPlayer;
 use App\Models\PlayerType;
 use App\Models\Team;
@@ -37,7 +37,7 @@ class TeamPlayerController extends Controller
 
     }
 
-    public function update(TeamPlayerUpdateRequest $request, TeamPlayer $teamPlayer)
+    public function update(TeamPlayerUpdateDeleteRequest $request, TeamPlayer $teamPlayer)
     {
         $validated = $request->validated();
 
@@ -49,6 +49,25 @@ class TeamPlayerController extends Controller
         return response()->json([
             'message' => 'Player updated successfully',
             'player' => $teamPlayer->id,
+        ], 200);
+
+    }
+
+    public function delete(TeamPlayerUpdateDeleteRequest $request, TeamPlayer $teamPlayer)
+    {
+        $playerName = $teamPlayer->name;
+
+        $team = $teamPlayer->team;
+
+        $team->gold_remaining += $teamPlayer->playerType->cost;
+
+        $team->save();
+
+        $teamPlayer->delete();
+
+        return response()->json([
+            'message' => 'Player deleted successfully',
+            'player' => $playerName ,
         ], 200);
 
     }

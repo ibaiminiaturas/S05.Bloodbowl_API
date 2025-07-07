@@ -10,7 +10,7 @@ use App\Models\TeamPlayer;
 use App\Rules\TeamHasEnoughGold;
 use App\Rules\PlayerTypeBelongsToRoster;
 
-class TeamPlayerUpdateRequest extends FormRequest
+class TeamPlayerUpdateDeleteRequest extends FormRequest
 {
     public function authorize(): bool
     {
