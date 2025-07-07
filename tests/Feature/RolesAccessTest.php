@@ -32,26 +32,26 @@ class RolesAccessTest extends TestCase
      */
     public function test_user_no_admin_can_not_access_to_users_table(): void
     {
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->create();
 
-        Passport::actingAs($user);
+        Passport::actingAs($coach);
 
         $response = $this->getJson('/api/user');
 
         $response->assertStatus(403);
-        $user->delete();
+        $coach->delete();
     }
 
     public function test_coach_user_can_access_coach_role_funcionalities(): void
     {
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
-        Passport::actingAs($user);
+        Passport::actingAs($coach);
 
         $response = $this->getJson('/api/skills');
 
         $response->assertStatus(200);
-        $user->delete();
+        $coach->delete();
     }
 
     public function test_admin_user_can_access_coach_role_funcionalities(): void
@@ -65,16 +65,17 @@ class RolesAccessTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_user_with_no_roles_can_access_coach_role_funcionalities(): void
+    public function test_user_with_no_roles_can_not_access_coach_role_funcionalities(): void
     {
-        $user = $this->DeleteUserAndCreate(false);
+        $coach = User::factory()->create();
+        $coach->removeRole('coach');
+        Passport::actingAs($coach);
 
-        Passport::actingAs($user);
 
         $response = $this->getJson('/api/skills');
 
         $response->assertStatus(403);
-        $user->delete();
+        $coach->delete();
     }
 
 }

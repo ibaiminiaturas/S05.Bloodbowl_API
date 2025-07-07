@@ -40,7 +40,7 @@ class CoachesInfoRetrieveTest extends TestCase
 
     public function test_no_admin_user_can_not_get_all_coaches(): void
     {
-        $coach = User::factory()->create();
+        $coach = User::factory()->coach()->create();
 
         Passport::actingAs($coach);
 
@@ -57,7 +57,7 @@ class CoachesInfoRetrieveTest extends TestCase
 
         Passport::actingAs($admin);
 
-        $coach = User::factory()->create();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->getJson('/api/coaches/'.$coach->id);
 
