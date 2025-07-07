@@ -19,7 +19,6 @@ class TeamUpdateTest extends TestCase
      */
     public function test_admin_user_can_update_team(): void
     {
-
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
 
