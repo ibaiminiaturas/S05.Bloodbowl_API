@@ -50,7 +50,7 @@ class TeamPlayerDeleteTest extends TestCase
 
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate(true, 'another@gmail.com');
+        $coach = User::factory()->coach()->create();
         $response = $this->createTeam($coach->id, 'another team');
         $team = Team::where('name', 'another team')->first();
 
@@ -74,7 +74,7 @@ class TeamPlayerDeleteTest extends TestCase
     {
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
         $response = $this->createTeam($coach->id);
         Passport::actingAs($coach);
 
