@@ -62,12 +62,12 @@ class TeamPlayerCreationRequest extends FormRequest
             $playerType = PlayerType::find($playerTypeId);
 
             if (! $team || ! $playerType) {
-                $validator->errors()->add('general', 'No se pudo verificar el equipo o tipo de jugador.');
+                $validator->errors()->add('general', 'Could not verify team or player type');
                 return;
             }
 
-            if ($team->gold < $playerType->cost) {
-                $validator->errors()->add('general', 'El equipo no tiene suficiente oro.');
+            if ($team->gold_remaining < $playerType->cost) {
+                $validator->errors()->add('general', 'The Team has not enough gold. Only ' . $team->gold_remaining . ' gold remaining');
             }
         });
     }
