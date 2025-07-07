@@ -34,20 +34,21 @@ class TeamsRetrieveTest extends TestCase
 
     public function test_coach_can_not_retrieve_all_teams(): void
     {
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
-        Passport::actingAs($user);
+        Passport::actingAs($coach);
 
         $response = $this->getJson('/api/teams');
 
         $response->assertStatus(403);
+        $coach->delete();
     }
 
     public function test_admin_can_retrieve_one_team(): void
     {
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->createTeam($coach->id);
 
@@ -70,7 +71,7 @@ class TeamsRetrieveTest extends TestCase
     {
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->createTeam($coach->id);
 
@@ -94,7 +95,7 @@ class TeamsRetrieveTest extends TestCase
     {
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->createTeam($coach->id);
 
@@ -102,7 +103,7 @@ class TeamsRetrieveTest extends TestCase
 
         $team = Team::where('name', 'Test team')->first();
 
-        $coachNotOfTheTeam = $this->DeleteUserAndCreate(true, 'another@email.com');
+        $coachNotOfTheTeam = User::factory()->coach()->create();
         Passport::actingAs($coachNotOfTheTeam);
 
         $response = $this->getJson('/api/teams/'. $team->id);
