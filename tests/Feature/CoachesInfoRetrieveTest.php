@@ -40,15 +40,15 @@ class CoachesInfoRetrieveTest extends TestCase
 
     public function test_no_admin_user_can_not_get_all_coaches(): void
     {
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->create();
 
-        Passport::actingAs($user);
+        Passport::actingAs($coach);
 
         $response = $this->getJson('/api/coaches');
 
         $response->assertStatus(403);
 
-        $user->delete();
+        $coach->delete();
     }
 
     public function test_admin_user_can_get_one_coach(): void
@@ -57,7 +57,7 @@ class CoachesInfoRetrieveTest extends TestCase
 
         Passport::actingAs($admin);
 
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->create();
 
         $response = $this->getJson('/api/coaches/'.$coach->id);
 
