@@ -53,6 +53,7 @@ class TeamPlayerCreationTest extends TestCase
 
     public function test_admin_can_create_player_into_team(): void
     {
+        $this->withoutExceptionHandling();
         $response = $this->createPlayer();
         $response->assertStatus(201);
         $player = TeamPlayer::where('name', 'Test Player')->delete();
@@ -149,7 +150,6 @@ class TeamPlayerCreationTest extends TestCase
 
     public function test_coach_can_not_create_player_into_team_that_is_not_theirs(): void
     {
-
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
         $coach = $this->DeleteUserAndCreate(true);
@@ -182,11 +182,81 @@ class TeamPlayerCreationTest extends TestCase
 
     public function test_coach_can_not_create_player_because_has_not_enough_gold(): void
     {
+        $response = $this->createPlayer(true);
+        $response->assertStatus(201);
+        $team = Team::where('name', 'Test team')->first();
+
+        $team->gold_remaining = 0;
+        $team->save();
+        $response = $this->postJson(
+            '/api/teams/'. $team->id . '/players',
+            [
+            'name' => 'Test Player 2',
+            'player_type_id' => PlayerType::where('roster_id', $team->roster_id)->first()->id,
+            'player_number' => 2,
+            'injuries' => '',
+            'spp' => 2
+
+        ]
+        );
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('general');
+        $response->assertJsonFragment([
+            'errors' => [
+                'general' => ['The Team has not enough gold. Only 0 gold remaining.'],
+            ],
+        ]);
 
     }
 
     public function test_coach_can_not_create_player_because_has_not_enough_spots_for_taht_player_type(): void
     {
+        TeamPlayer::query()->delete();
+        $admin = $this->getAdminUser();
+        Passport::actingAs($admin);
+        $coach = $this->DeleteUserAndCreate();
+        $response = $this->createTeam($coach->id);
+        $team = Team::where('name', 'Test team')->first();
+
+        $playerType = PlayerType::where('roster_id', $team->roster_id)
+            ->orderBy('max_per_team', 'asc')
+            ->first();
+
+        for ($i = 0; $i < $playerType->max_per_team; $i++) {
+            $response = $this->postJson(
+                '/api/teams/' . $team->id . '/players',
+                [
+                    'name' => 'Test Player ' . $i,
+                    'player_type_id' => $playerType->id,
+                    'player_number' => $i + 2,
+                    'injuries' => '',
+                    'spp' => 2
+                ]
+            );
+        }
+        //try to create the nth + 1
+
+        $response = $this->postJson(
+            '/api/teams/'. $team->id . '/players',
+            [
+                'name' => 'Test Player 10',
+                'player_type_id' => $playerType->id,
+                'player_number' => 10,
+                'injuries' => '',
+                'spp' => 2
+
+        ]
+        );
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('player_type_id');
+        $response->assertJsonFragment([
+            'errors' => [
+                'player_type_id' => ['You already have the maximum of that kind of player.'],
+            ],
+        ]);
+
 
     }
 

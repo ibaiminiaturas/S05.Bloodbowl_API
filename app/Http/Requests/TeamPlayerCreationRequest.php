@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\Team;
 use App\Models\PlayerType;
+use App\Models\TeamPlayer;
 use App\Rules\TeamHasEnoughGold;
 use App\Rules\PlayerTypeBelongsToRoster;
 
@@ -34,6 +35,8 @@ class TeamPlayerCreationRequest extends FormRequest
                 'exists:player_types,id',
                 new PlayerTypeBelongsToRoster($teamId),
             ],
+
+           //'team_id' => 'integer|exists:teams,id',
 
            'player_number' => [
                 'required',
@@ -75,11 +78,11 @@ class TeamPlayerCreationRequest extends FormRequest
                 return;
             }
 
-            if ($team->coach_id !== $user->id) {
+
+            if ($user->hasRole('coach') && $team->coach_id !== $user->id) {
                 $validator->errors()->add('team_id', 'The team does not belong to the user.');
                 return;
             }
-
 
 
             if (! $team || ! $playerType) {
@@ -88,8 +91,21 @@ class TeamPlayerCreationRequest extends FormRequest
             }
 
             if ($team->gold_remaining < $playerType->cost) {
-                $validator->errors()->add('general', 'The Team has not enough gold. Only ' . $team->gold_remaining . ' gold remaining');
+                $validator->errors()->add('general', 'The Team has not enough gold. Only ' . $team->gold_remaining . ' gold remaining.');
             }
+
+            // Supongamos que tienes un método para obtener el máximo spots para el tipo
+            $maxSpots = PlayerType::find($playerTypeId)->max_per_team ?? 0;
+
+            // Cuenta cuantos jugadores de ese tipo tiene el equipo
+            $currentCount = TeamPlayer::where('team_id', $teamId)
+                ->where('player_type_id', $playerTypeId)
+                ->count();
+
+            if ($currentCount >= $maxSpots) {
+                $validator->errors()->add('player_type_id', 'You already have the maximum of that kind of player.');
+            }
+
 
 
         });
