@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Team;
 use App\Models\Roster;
 use App\Models\PlayerType;
+use App\Models\TeamPlayer;
 use Laravel\Passport\Passport;
 use Tests\Traits\UtilsForTesting;
 
@@ -29,6 +30,7 @@ class TeamPlayerCreationTest extends TestCase
         $response = $this->postJson('/api/teams/'. $team->id . '/players',
         [
             'name' => 'Test Player',
+            'team_id' => $team->id,
             'player_type_id' => PlayerType::where('roster_id', $team->roster_id)->first()->id,
             'player_number' => 1,
             'injuries' => '',
@@ -36,6 +38,10 @@ class TeamPlayerCreationTest extends TestCase
         
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
+
+        
+        $player = TeamPlayer::where('name', 'Test Player')->delete();
+        $response->assertStatus(201);
     }
 }

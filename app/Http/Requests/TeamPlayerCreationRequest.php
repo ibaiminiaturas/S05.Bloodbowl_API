@@ -25,6 +25,7 @@ public function rules()
 {
     return [
         'player_type_id' => 'required|integer|exists:player_types,id',
+        'team_id' => 'required|integer|exists:teams,id',
         'player_number' => [
             'required',
             'integer',

@@ -14,13 +14,14 @@ class TeamPlayerController extends Controller
 
         $teamPlayer = TeamPlayer::create([
             'name' => $validated['name'],
+            'team_id' => $validated['team_id'],
             'player_type_id' => $validated['player_type_id'],
             'player_number' => $validated['player_number'],
             'injuries' => $validated['injuries'],
             'spp' => $validated['spp'],
         ]);
 
-        return response()->json($team, 201);
+        return response()->json($teamPlayer, 201);
 
     }
 }
