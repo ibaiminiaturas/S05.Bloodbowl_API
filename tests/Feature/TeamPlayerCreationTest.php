@@ -150,5 +150,19 @@ class TeamPlayerCreationTest extends TestCase
 
     }
 
+    public function test_coach_can_not_create_player_into_team_that_is_not_theirs(): void
+    {
+
+    }
+
+    public function test_coach_can_not_create_player_because_has_not_enough_gold(): void
+    {
+
+    }
+
+    public function test_coach_can_not_create_player_because_has_not_enough_spots_for_taht_player_type(): void
+    {
+
+    }
 
 }
