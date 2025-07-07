@@ -21,7 +21,6 @@ class TeamPlayerUpdateTest extends TestCase
      */
     public function test_coach_can_edit_player_of_a_team_he_owns(): void
     {
-
         TeamPlayer::query()->delete();
         $response = $this->createPlayer();
         $response->assertStatus(201);
@@ -52,7 +51,7 @@ class TeamPlayerUpdateTest extends TestCase
 
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate(true, 'another@gmail.com');
+        $coach = User::factory()->coach()->create();
         $response = $this->createTeam($coach->id, 'another team');
         $team = Team::where('name', 'another team')->first();
 
@@ -73,6 +72,8 @@ class TeamPlayerUpdateTest extends TestCase
                 'team_id' => ['The team does not belong to the user.'],
             ],
         ]);
+
+        $coach->delete();
 
     }
 }
