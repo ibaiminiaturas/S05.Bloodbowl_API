@@ -13,7 +13,6 @@ class UserRegistrationTest extends TestCase
 {
     public function test_user_can_register_successfully(): void
     {
-        $this->withoutExceptionHandling();
         $user = User::Where('email', 'ibai@example.com')->first();
 
         if ($user != null) {
@@ -52,20 +51,14 @@ class UserRegistrationTest extends TestCase
             $user->delete();
         }
 
-        $response = $this->postJson('/api/register', [
-            'name' => 'Ibaimania',
-            'email' => 'ibai@example.com',
-            'password' => 'secret123',
-            'password_confirmation' => 'secret123',
-        ]);
-
+        $coach = User::factory()->coach()->create();
 
 
         $response = $this->postJson('/api/register', [
             'name' => 'anotherIbai',
-            'email' => 'ibai@example.com',
-            'password' => 'secret1234',
-            'password_confirmation' => 'secret1234',
+            'email' => $coach->email,
+            'password' => 'password',
+            'password_confirmation' => 'password',
         ]);
 
         $response->assertStatus(422);
