@@ -22,7 +22,7 @@ class TeamUpdateTest extends TestCase
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
 
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->createTeam($coach->id);
 
@@ -43,13 +43,14 @@ class TeamUpdateTest extends TestCase
         $response->assertStatus(200);
 
         $team->delete();
+        $coach->delete();
     }
 
     public function test_coach_user_can_update_his_team(): void
     {
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->createTeam($coach->id);
 
@@ -70,13 +71,14 @@ class TeamUpdateTest extends TestCase
         $response->assertStatus(200);
 
         $team->delete();
+        $coach->delete();
     }
 
     public function test_coach_user_can_not_update_a_team_is_not_theirs(): void
     {
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
-        $coach = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->createTeam($coach->id);
 
@@ -84,7 +86,7 @@ class TeamUpdateTest extends TestCase
 
         $team = Team::where('name', 'Test team')->first();
 
-        $coach2 = $this->DeleteUserAndCreate(true, 'another_user@gmail.com');
+        $coach2 = User::factory()->coach()->create();
         Passport::actingAs($coach2);
 
         $response = $this->putJson(
