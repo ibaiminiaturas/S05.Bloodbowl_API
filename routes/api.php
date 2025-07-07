@@ -9,6 +9,7 @@ use App\Http\Controllers\RosterController;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamPlayerController;
+use App\Http\Controllers\SimulateMatchController;
 
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
@@ -23,7 +24,7 @@ Route::middleware(['auth:api', 'token.revoked', 'role:admin'])->group(function (
     Route::get('/coaches', [CoachController::class, 'index']);
     Route::post('/teams', [TeamController::class, 'store']);
     Route::get('/teams', [TeamController::class, 'index']);
-
+    Route::post('/matches/simulate', [SimulateMatchController::class, 'post']);
 
 });
 // Rutas protegidas por autenticación
@@ -38,4 +39,5 @@ Route::middleware(['auth:api', 'token.revoked', 'role:admin|coach'])->group(func
     Route::post('/teams/{team}/players', [TeamPlayerController::class, 'store']);
     Route::put('/players/{teamPlayer}', [TeamPlayerController::class, 'update']);
     Route::delete('/players/{teamPlayer}', [TeamPlayerController::class, 'delete']);
+
 });

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Team extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'coach_id',
@@ -23,4 +26,10 @@ class Team extends Model
     {
         return $this->belongsTo(Roster::class);
     }
+
+    public function teamPlayers()
+    {
+        return $this->hasMany(TeamPlayer::class);
+    }
+
 }
