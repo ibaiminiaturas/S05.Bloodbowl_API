@@ -8,6 +8,7 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\RosterController;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TeamPlayerController;
 
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
