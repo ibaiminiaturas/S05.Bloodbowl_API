@@ -29,7 +29,7 @@ class TeamPlayerCreationTest extends TestCase
         $response = $this->postJson('/api/teams/'. $team->id . '/players',
         [
             'name' => 'Test Player',
-            'player_type_id' => PlayerType::where('team_id', $team->roster_id)->first()->id,
+            'player_type_id' => PlayerType::where('roster_id', $team->roster_id)->first()->id,
             'player_number' => 1,
             'injuries' => '',
             'spp' => 2

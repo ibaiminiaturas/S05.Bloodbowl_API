@@ -37,15 +37,14 @@ public function rules()
         'name'=> [
             'min:6', 
             'max:255',
-            'integer',
             Rule::unique('team_players')->where(function ($query) {
                 return $query->where('team_id', $this->team_id)
                 ->where('name', $this->name);;
             }),
         ],
 
-        'injuries' => 'min:6|max:255',
-        'spp' => 'integer|min:0|max20'
+        'injuries' => 'min:0|max:255',
+        'spp' => 'integer|min:0|max:20'
     ];
 }
 }

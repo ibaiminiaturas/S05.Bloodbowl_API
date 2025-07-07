@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\TeamPlayerCreationRequest;
-
+use App\Models\TeamPlayer;
 
 class TeamPlayerController extends Controller
 {
@@ -12,12 +12,12 @@ class TeamPlayerController extends Controller
     {
         $validated = $request->validated();
 
-        $team = Team::create([
+        $teamPlayer = TeamPlayer::create([
             'name' => $validated['name'],
-            'coach_id' => $validated['coach_id'],
-            'roster_id' => $validated['roster_id'],
-            'gold_remaining' => $validated['gold_remaining'],
-            'team_value' => $validated['team_value'],
+            'player_type_id' => $validated['player_type_id'],
+            'player_number' => $validated['player_number'],
+            'injuries' => $validated['injuries'],
+            'spp' => $validated['spp'],
         ]);
 
         return response()->json($team, 201);
