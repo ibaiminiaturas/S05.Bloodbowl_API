@@ -31,9 +31,9 @@ class SkillsRetrieveTest extends TestCase
         $this->assertEquals(count($data['data']), Skill::count());
 
 
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
-        Passport::actingAs($user);
+        Passport::actingAs($coach);
         $response = $this->getJson('/api/skills');
 
         $response->assertStatus(200);
@@ -42,5 +42,7 @@ class SkillsRetrieveTest extends TestCase
         $this->assertNotEmpty($data);
 
         $this->assertEquals(count($data['data']), Skill::count());
+
+        $coach->delete();
     }
 }
