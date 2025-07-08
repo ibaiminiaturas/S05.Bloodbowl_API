@@ -17,8 +17,9 @@ class LoginController extends Controller
      /**
      * @OA\Post(
      *     path="/api/login",
-     *     summary="Iniciar sesión",
-     *     tags={"Authoritation"},
+    *     operationId="loginUser",
+    *     summary="Iniciar sesión",
+    *     tags={"Authoritation"},
      *     description="Autentica un usuario y devuelve un token Bearer.",
      *     @OA\RequestBody(
      *         required=true,
@@ -73,6 +74,7 @@ class LoginController extends Controller
      * @OA\Post(
      *     path="/api/logout",
      *     summary="Cerrar sesión",
+     *     operationId="logoutUser",
      *     tags={"Authoritation"},
      *     description="Cierra la sesión del usuario invalidando el token de acceso actual. El usuario deberá autenticarse nuevamente para obtener un nuevo token.",
      *     @OA\Response(

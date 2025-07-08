@@ -1,10 +1,10 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "BloodBowl Manager",
-        "description": "Documentación de la API Laravel",
+        "title": "Bloodbowl API",
+        "description": "Documentación API Bloodbowl",
         "contact": {
-            "email": "ibaiminiaturas@gmail.com"
+            "email": "tu-email@ejemplo.com"
         },
         "version": "1.0.0"
     },
@@ -16,7 +16,7 @@
                 ],
                 "summary": "Iniciar sesión",
                 "description": "Autentica un usuario y devuelve un token Bearer.",
-                "operationId": "3673edffcdc18c06ac5aef5e2219d774",
+                "operationId": "loginUser",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -77,7 +77,7 @@
                 ],
                 "summary": "Cerrar sesión",
                 "description": "Cierra la sesión del usuario invalidando el token de acceso actual. El usuario deberá autenticarse nuevamente para obtener un nuevo token.",
-                "operationId": "5e29d25372d83a1ff5c3165a43f3302d",
+                "operationId": "logoutUser",
                 "responses": {
                     "200": {
                         "description": "Successfully logged out"
@@ -95,7 +95,7 @@
                 ],
                 "summary": "Registro de usuario.",
                 "description": "Crea un nuevo usuario en el sistema con los datos proporcionados. Devuelve información básica del usuario creado y un token de acceso para autenticación inmediata. Además agrega el rol 'coach' al usuario creado",
-                "operationId": "748a1acc92fb3e56f8f6ace55b5a9d24",
+                "operationId": "registerUser",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -203,12 +203,172 @@
                     }
                 }
             }
+        },
+        "/api/coaches": {
+            "get": {
+                "tags": [
+                    "Coaches"
+                ],
+                "summary": "Get list of users with 'coach' role",
+                "description": "Returns an array of users who have the 'coach' role assigned.",
+                "operationId": "getCoaches",
+                "responses": {
+                    "200": {
+                        "description": "Users list retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 302
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Mrs. Melissa Franecki Jr."
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "format": "email",
+                                                        "example": "ima.ohara@example.org"
+                                                    },
+                                                    "email_verified_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-07-08T08:05:50.000000Z"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-07-08T08:05:50.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-07-08T08:05:50.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    },
+                    "403": {
+                        "description": "User does not have the right roles."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/coaches/{coach}": {
+            "get": {
+                "tags": [
+                    "Coaches"
+                ],
+                "summary": "Get coach data by ID",
+                "description": "Returns basic data of a user with the 'coach' role. Returns 404 if the user does not have that role.",
+                "operationId": "c4aaa503b73d08fed553c4e153c976d8",
+                "parameters": [
+                    {
+                        "name": "coach",
+                        "in": "path",
+                        "description": "ID of the coach user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 302
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Coach data retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 302
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Mrs. Melissa Franecki Jr."
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "ima.ohara@example.org"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-07-08T08:05:50.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-07-08T08:05:50.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found or is not a coach"
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Autenticación usando Bearer Token JWT",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
         }
     },
     "tags": [
         {
             "name": "Authoritation",
             "description": "Authoritation"
+        },
+        {
+            "name": "Coaches",
+            "description": "Coaches"
         }
     ]
 }

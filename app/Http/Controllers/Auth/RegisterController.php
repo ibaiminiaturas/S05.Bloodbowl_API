@@ -16,7 +16,8 @@ class RegisterController extends Controller
  * @OA\Post(
  *     path="/api/register",
  *     summary="Registro de usuario.",
-   *     tags={"Authoritation"},
+ *     operationId="registerUser",
+ *     tags={"Authoritation"},
  *     description="Crea un nuevo usuario en el sistema con los datos proporcionados. Devuelve información básica del usuario creado y un token de acceso para autenticación inmediata. Además agrega el rol 'coach' al usuario creado",
  *     @OA\RequestBody(
  *         required=true,
