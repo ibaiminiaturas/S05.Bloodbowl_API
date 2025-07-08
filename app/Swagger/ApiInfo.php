@@ -8,7 +8,7 @@ namespace App\Swagger;
  *     title="Bloodbowl API",
  *     description="Documentación API Bloodbowl",
  *     @OA\Contact(
- *         email="tu-email@ejemplo.com"
+ *         email="ibaiminiaturas@gmail.com"
  *     )
  * )
  *
