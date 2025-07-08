@@ -5,6 +5,87 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\SimulateMatchRequest;
 use App\Models\Team;
+/**
+ * @OA\Post(
+ *     path="/api/simulate-match",
+ *     summary="Simulate a match between two teams",
+ *     tags={"Match Simulation"},
+ *     description="Simulates touchdowns scored by players of two teams and returns results with the winner.",
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"team_1_id", "team_2_id"},
+ *             @OA\Property(property="team_1_id", type="integer", example=1, description="ID of the first team"),
+ *             @OA\Property(property="team_2_id", type="integer", example=2, description="ID of the second team")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Match simulated successfully",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             example={
+ *                 "team_1": {
+ *                     "name": "Team A",
+ *                     "touchdowns": 3,
+ *                     "scorers": {
+ *                         {"player_name": "John Doe", "touchdowns": 2},
+ *                         {"player_name": "Mike Brown", "touchdowns": 1}
+ *                     }
+ *                 },
+ *                 "team_2": {
+ *                     "name": "Team B",
+ *                     "touchdowns": 1,
+ *                     "scorers": {
+ *                         {"player_name": "Jane Smith", "touchdowns": 1}
+ *                     }
+ *                 },
+ *                 "winner": "Team A"
+ *             },
+ *             @OA\Property(
+ *                 property="team_1",
+ *                 type="object",
+ *                 @OA\Property(property="name", type="string", example="Team A"),
+ *                 @OA\Property(property="touchdowns", type="integer", example=3),
+ *                 @OA\Property(
+ *                     property="scorers",
+ *                     type="array",
+ *                     @OA\Items(
+ *                         type="object",
+ *                         @OA\Property(property="player_name", type="string", example="John Doe"),
+ *                         @OA\Property(property="touchdowns", type="integer", example=2)
+ *                     )
+ *                 )
+ *             ),
+ *             @OA\Property(
+ *                 property="team_2",
+ *                 type="object",
+ *                 @OA\Property(property="name", type="string", example="Team B"),
+ *                 @OA\Property(property="touchdowns", type="integer", example=1),
+ *                 @OA\Property(
+ *                     property="scorers",
+ *                     type="array",
+ *                     @OA\Items(
+ *                         type="object",
+ *                         @OA\Property(property="player_name", type="string", example="Jane Smith"),
+ *                         @OA\Property(property="touchdowns", type="integer", example=1)
+ *                     )
+ *                 )
+ *             ),
+ *             @OA\Property(property="winner", type="string", example="Team A")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error (e.g., missing or invalid team IDs)"
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized. Invalid or missing token."
+ *     )
+ * )
+ */
 
 class SimulateMatchController extends Controller
 {

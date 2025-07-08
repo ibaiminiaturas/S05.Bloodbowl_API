@@ -492,6 +492,156 @@
                     }
                 ]
             }
+        },
+        "/api/simulate-match": {
+            "post": {
+                "tags": [
+                    "Match Simulation"
+                ],
+                "summary": "Simulate a match between two teams",
+                "description": "Simulates touchdowns scored by players of two teams and returns results with the winner.",
+                "operationId": "523102c41b17a65fa9b6fcefa11c6153",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "team_1_id",
+                                    "team_2_id"
+                                ],
+                                "properties": {
+                                    "team_1_id": {
+                                        "description": "ID of the first team",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "team_2_id": {
+                                        "description": "ID of the second team",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Match simulated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "team_1": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Team A"
+                                                },
+                                                "touchdowns": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "scorers": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "player_name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "touchdowns": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "team_2": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Team B"
+                                                },
+                                                "touchdowns": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "scorers": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "player_name": {
+                                                                "type": "string",
+                                                                "example": "Jane Smith"
+                                                            },
+                                                            "touchdowns": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "winner": {
+                                            "type": "string",
+                                            "example": "Team A"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "team_1": {
+                                        "name": "Team A",
+                                        "touchdowns": 3,
+                                        "scorers": [
+                                            {
+                                                "player_name": "John Doe",
+                                                "touchdowns": 2
+                                            },
+                                            {
+                                                "player_name": "Mike Brown",
+                                                "touchdowns": 1
+                                            }
+                                        ]
+                                    },
+                                    "team_2": {
+                                        "name": "Team B",
+                                        "touchdowns": 1,
+                                        "scorers": [
+                                            {
+                                                "player_name": "Jane Smith",
+                                                "touchdowns": 1
+                                            }
+                                        ]
+                                    },
+                                    "winner": "Team A"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error (e.g., missing or invalid team IDs)"
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -516,6 +666,10 @@
         {
             "name": "Rosters",
             "description": "Rosters"
+        },
+        {
+            "name": "Match Simulation",
+            "description": "Match Simulation"
         }
     ]
 }
