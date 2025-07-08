@@ -349,6 +349,149 @@
                     }
                 ]
             }
+        },
+        "/api/rosters": {
+            "get": {
+                "tags": [
+                    "Rosters"
+                ],
+                "summary": "Get all rosters",
+                "description": "Returns a list of all rosters available in the system.",
+                "operationId": "3099c3eea99c0296b86ce4433db362a5",
+                "responses": {
+                    "200": {
+                        "description": "List of rosters retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Humans"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/rosters/{roster}": {
+            "get": {
+                "tags": [
+                    "Rosters"
+                ],
+                "summary": "Get player types for a specific roster",
+                "description": "Returns the list of player types associated with the specified roster.",
+                "operationId": "8dbdba4ec6d0d5ad48159ca05615ae48",
+                "parameters": [
+                    {
+                        "name": "roster",
+                        "in": "path",
+                        "description": "ID of the roster",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Player types retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Lineman"
+                                                    },
+                                                    "roster_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "max_per_team": {
+                                                        "type": "integer",
+                                                        "example": 16
+                                                    },
+                                                    "movement": {
+                                                        "type": "integer",
+                                                        "example": 6
+                                                    },
+                                                    "strength": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "agility": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "passing": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "armor": {
+                                                        "type": "integer",
+                                                        "example": 7
+                                                    },
+                                                    "cost": {
+                                                        "type": "integer",
+                                                        "example": 50000
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    },
+                    "404": {
+                        "description": "No query results for model [App\\\\Models\\\\Roster] *"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -369,6 +512,10 @@
         {
             "name": "Coaches",
             "description": "Coaches"
+        },
+        {
+            "name": "Rosters",
+            "description": "Rosters"
         }
     ]
 }
