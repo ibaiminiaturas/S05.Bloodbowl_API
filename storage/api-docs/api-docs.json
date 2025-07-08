@@ -642,6 +642,87 @@
                     }
                 ]
             }
+        },
+        "/api/skills": {
+            "get": {
+                "tags": [
+                    "Skills"
+                ],
+                "summary": "Get all skills",
+                "description": "Returns a list of all available skills.",
+                "operationId": "ae74ff391999fe7d8689225802a9d693",
+                "responses": {
+                    "200": {
+                        "description": "List of skills retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Block"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Allows a player to safely block an opponent."
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": 1,
+                                            "name": "Block",
+                                            "description": "Allows a player to safely block an opponent."
+                                        },
+                                        {
+                                            "id": 2,
+                                            "name": "Dodge",
+                                            "description": "Helps a player avoid tackles more easily."
+                                        },
+                                        {
+                                            "id": 3,
+                                            "name": "Mighty Blow",
+                                            "description": "Increases damage on blocks."
+                                        },
+                                        {
+                                            "id": 4,
+                                            "name": "Kick",
+                                            "description": "Improves kicking distance."
+                                        },
+                                        {
+                                            "id": 5,
+                                            "name": "Catch",
+                                            "description": "Increases chance of catching the ball."
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -670,6 +751,10 @@
         {
             "name": "Match Simulation",
             "description": "Match Simulation"
+        },
+        {
+            "name": "Skills",
+            "description": "Skills"
         }
     ]
 }
