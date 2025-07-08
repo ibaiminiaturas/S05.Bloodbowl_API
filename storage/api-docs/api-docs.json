@@ -1243,6 +1243,421 @@
                     }
                 ]
             }
+        },
+        "/api/teams/{team}/players": {
+            "post": {
+                "tags": [
+                    "Team Players"
+                ],
+                "summary": "Add a player to a team",
+                "operationId": "addPlayerToTeam",
+                "parameters": [
+                    {
+                        "name": "team",
+                        "in": "path",
+                        "description": "ID of the team to which the player will be added",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 194
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "player_type_id",
+                                    "player_number",
+                                    "spp"
+                                ],
+                                "properties": {
+                                    "player_type_id": {
+                                        "description": "ID of the player type",
+                                        "type": "integer",
+                                        "example": 13
+                                    },
+                                    "player_number": {
+                                        "description": "Unique number of the player in the team",
+                                        "type": "integer",
+                                        "example": 4
+                                    },
+                                    "name": {
+                                        "description": "Player's name (optional but must be unique per team)",
+                                        "type": "string",
+                                        "example": "Morg 'n Thorg"
+                                    },
+                                    "injuries": {
+                                        "description": "Optional injury notes",
+                                        "type": "string",
+                                        "example": "Fractured Skull",
+                                        "nullable": true
+                                    },
+                                    "spp": {
+                                        "description": "Star Player Points",
+                                        "type": "integer",
+                                        "maximum": 20,
+                                        "minimum": 0,
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Player successfully added to the team",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 141
+                                        },
+                                        "team_id": {
+                                            "type": "integer",
+                                            "example": 194
+                                        },
+                                        "player_type_id": {
+                                            "type": "integer",
+                                            "example": 13
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Morg 'n Thorg"
+                                        },
+                                        "player_number": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "injuries": {
+                                            "type": "string",
+                                            "example": "Fractured Skull"
+                                        },
+                                        "spp": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T12:00:00.000000Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T12:00:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "player_number": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The player number has already been taken."
+                                                    }
+                                                },
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name has already been taken."
+                                                    }
+                                                },
+                                                "spp": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The spp must be at most 20."
+                                                    }
+                                                },
+                                                "player_type_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "You already have the maximum of that kind of player."
+                                                    }
+                                                },
+                                                "general": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The Team has not enough gold. Only XXXXXX gold remaining."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - team does not belong to the user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The team does not belong to the user."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/team-players/{teamPlayer}": {
+            "put": {
+                "tags": [
+                    "Team Players"
+                ],
+                "summary": "Update a team player's injuries or SPP",
+                "operationId": "updateTeamPlayer",
+                "parameters": [
+                    {
+                        "name": "teamPlayer",
+                        "in": "path",
+                        "description": "ID of the team player to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 141
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "spp"
+                                ],
+                                "properties": {
+                                    "injuries": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Broken Arm",
+                                        "nullable": true
+                                    },
+                                    "spp": {
+                                        "type": "integer",
+                                        "maximum": 20,
+                                        "minimum": 0,
+                                        "example": 12
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Player updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Player updated successfully"
+                                        },
+                                        "player": {
+                                            "type": "integer",
+                                            "example": 141
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "spp": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The spp must be between 0 and 20."
+                                                    }
+                                                },
+                                                "injuries": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The injuries must not be greater than 255 characters."
+                                                    }
+                                                },
+                                                "general": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Could not verify the player."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user does not own the team",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The team does not belong to the user."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Team player not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Team Players"
+                ],
+                "summary": "Delete a team player and refund their cost",
+                "operationId": "deleteTeamPlayer",
+                "parameters": [
+                    {
+                        "name": "teamPlayer",
+                        "in": "path",
+                        "description": "ID of the team player to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 145
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Player deleted successfully and gold refunded to the team",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Player deleted successfully"
+                                        },
+                                        "player": {
+                                            "type": "string",
+                                            "example": "Dr. Summer Bins Jr."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "general": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Could not verify the player."
+                                                    }
+                                                },
+                                                "team_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The team does not belong to the user."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Team player not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1279,6 +1694,10 @@
         {
             "name": "Teams",
             "description": "Teams"
+        },
+        {
+            "name": "Team Players",
+            "description": "Team Players"
         }
     ]
 }
