@@ -15,6 +15,13 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
 
 
+Route::get('/status', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'API is running!'
+    ]);
+});
+
 // Rutas protegidas por autenticación
 Route::middleware(['auth:api', 'token.revoked', 'role:admin'])->group(function () {
     Route::get('/user', function (Request $request) {
