@@ -50,6 +50,11 @@ class LoginController extends Controller
         $user = User::where('email', $request->email)->first();
 
 
+        return response()->json([
+            $user,
+        ], 200);
+
+
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                     'message' => 'The given data was invalid.',
