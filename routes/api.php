@@ -22,13 +22,6 @@ Route::get('/status', function () {
     ]);
 });
 
-Route::get('/testeo', function () {
-    return response()->json([
-        'status' => 'ok',
-        'message' => 'Jordi es un maaaaaaaaaaaaaaaaaaaaaaaaaaaarica, pum pum pum, maaaaaaaaaaaaariquita!!!!!'
-    ]);
-});
-
 // Rutas protegidas por autenticación
 Route::middleware(['auth:api', 'token.revoked', 'role:admin'])->group(function () {
     Route::get('/user', function (Request $request) {
