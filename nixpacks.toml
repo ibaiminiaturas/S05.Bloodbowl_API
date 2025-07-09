@@ -1,8 +1,9 @@
 [phases.build]
-cmds = ['composer install --no-dev --optimize-autoloader']
-
-[phases.setup]
-nixpkgs = ['php81', 'nginx']
+cmds = [
+    'composer install --no-dev --no-scripts --optimize-autoloader',
+    'php artisan config:clear',
+    'php artisan cache:clear'
+]
 
 [start]
 cmd = 'php artisan serve --host=0.0.0.0 --port=$PORT'
