@@ -20,17 +20,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        $keyPath = storage_path('oauth-private.key');
-
-        if (file_exists($keyPath)) {
-            @chmod($keyPath, 0600);
-        }
-
-        $pubKeyPath = storage_path('oauth-public.key');
-
-        if (file_exists($pubKeyPath)) {
-            @chmod($pubKeyPath, 0600);
-        }
-
     }
 }
