@@ -58,12 +58,13 @@ class LoginController extends Controller
             ], 422);
         }
 
+
+    try {
         $token = $user->createToken('auth_token')->accessToken;
-
-                return response()->json([
-            $token], 200);
-
-
+    } catch (\Throwable $e) {
+        
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
