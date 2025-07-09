@@ -12,9 +12,7 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
 
-        if (!app()->environment('local', 'development')) {
-            return;
-        }
+
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
         $adminRole = Role::firstOrCreate(
             ['name' => 'admin', 'guard_name' => 'api']
