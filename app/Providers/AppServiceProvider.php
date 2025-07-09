@@ -19,17 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-              if (app()->environment('production')) {
-        $privateKey = storage_path('oauth-private.key');
-        $publicKey = storage_path('oauth-public.key');
 
-        if (File::exists($privateKey)) {
-            @chmod($privateKey, 0660);
-        }
-
-        if (File::exists($publicKey)) {
-            @chmod($publicKey, 0660);
-        }
-    }
     }
 }
