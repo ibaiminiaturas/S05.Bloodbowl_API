@@ -1,9 +1,0 @@
-[phases.setup]
-nixpkgsArchive = "https://github.com/NixOS/nixpkgs/archive/refs/tags/23.11.tar.gz"
-packages = ["php82", "composer", "php82-mysql", "php82-pdo", "php82-openssl"]
-
-[phases.build]
-cmds = ['composer install --no-dev --optimize-autoloader']
-
-[start]
-cmd = 'php -S 0.0.0.0:$PORT -t public'
