@@ -59,10 +59,6 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
-        ],
-        "post-install-cmd": [
-            "chmod 600 storage/oauth-private.key",
-            "chmod 600 storage/oauth-public.key"
         ]
 
     },
