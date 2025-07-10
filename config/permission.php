@@ -199,4 +199,10 @@ return [
 
         'store' => 'default',
     ],
+
+    'guards' => ['api'],
+
+    'defaults' => [
+    'guard' => 'api',
+],
 ];

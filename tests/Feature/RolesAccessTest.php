@@ -9,7 +9,6 @@ use App\Models\User;
 use Laravel\Passport\Passport;
 use Tests\Traits\UtilsForTesting;
 
-
 class RolesAccessTest extends TestCase
 {
     use UtilsForTesting;
@@ -18,9 +17,9 @@ class RolesAccessTest extends TestCase
      */
     public function test_user_admin_can_access_to_users_table(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        $admin = $this->getAdminUser();
 
-        Passport::actingAs($user);
+        Passport::actingAs($admin);
 
         $response = $this->getJson('/api/user');
 
@@ -33,38 +32,50 @@ class RolesAccessTest extends TestCase
      */
     public function test_user_no_admin_can_not_access_to_users_table(): void
     {
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->create();
 
-        Passport::actingAs($user);
+        Passport::actingAs($coach);
 
         $response = $this->getJson('/api/user');
 
         $response->assertStatus(403);
-        $user->delete();
+        $coach->delete();
     }
 
     public function test_coach_user_can_access_coach_role_funcionalities(): void
     {
-        $user = $this->DeleteUserAndCreate();
-        $user->assignRole('coach');
+        $coach = User::factory()->coach()->create();
 
-        Passport::actingAs($user);
+        Passport::actingAs($coach);
 
         $response = $this->getJson('/api/skills');
 
         $response->assertStatus(200);
-       // $user->delete();
+        $coach->delete();
     }
 
     public function test_admin_user_can_access_coach_role_funcionalities(): void
     {
-        $user = User::where('email', 'ibaiminiaturas@gmail.com')->first();
+        $admin = $this->getAdminUser();
 
-        Passport::actingAs($user);
+        Passport::actingAs($admin);
 
         $response = $this->getJson('/api/skills');
 
         $response->assertStatus(200);
+    }
+
+    public function test_user_with_no_roles_can_not_access_coach_role_funcionalities(): void
+    {
+        $coach = User::factory()->create();
+        $coach->removeRole('coach');
+        Passport::actingAs($coach);
+
+
+        $response = $this->getJson('/api/skills');
+
+        $response->assertStatus(403);
+        $coach->delete();
     }
 
 }

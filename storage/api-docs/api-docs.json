@@ -1,0 +1,1703 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Bloodbowl API",
+        "description": "Documentación API Bloodbowl",
+        "contact": {
+            "email": "tu-email@ejemplo.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authoritation"
+                ],
+                "summary": "Iniciar sesión",
+                "description": "Autentica un usuario y devuelve un token Bearer.",
+                "operationId": "loginUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "usuario@ejemplo.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Credenciales inválidas"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authoritation"
+                ],
+                "summary": "Cerrar sesión",
+                "description": "Cierra la sesión del usuario invalidando el token de acceso actual. El usuario deberá autenticarse nuevamente para obtener un nuevo token.",
+                "operationId": "logoutUser",
+                "responses": {
+                    "200": {
+                        "description": "Successfully logged out"
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Authoritation"
+                ],
+                "summary": "Registro de usuario.",
+                "description": "Crea un nuevo usuario en el sistema con los datos proporcionados. Devuelve información básica del usuario creado y un token de acceso para autenticación inmediata. Además agrega el rol 'coach' al usuario creado",
+                "operationId": "registerUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "nombre1"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "usuario@ejemplo.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registro exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "example": "nombre1"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "format": "email",
+                                            "example": "usuario@ejemplo.com"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T08:47:41.000000Z"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T08:47:41.000000Z"
+                                        },
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 345
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "email": [
+                                                    "The email has already been taken.",
+                                                    "The email field is required."
+                                                ],
+                                                "name": [
+                                                    "The name field is required."
+                                                ],
+                                                "password": [
+                                                    "The password field is required.",
+                                                    "The password field confirmation does not match.",
+                                                    "The password field must be at least 6 characters."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/coaches": {
+            "get": {
+                "tags": [
+                    "Coaches"
+                ],
+                "summary": "Get list of users with 'coach' role",
+                "description": "Returns an array of users who have the 'coach' role assigned.",
+                "operationId": "getCoaches",
+                "responses": {
+                    "200": {
+                        "description": "Users list retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 302
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Mrs. Melissa Franecki Jr."
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "format": "email",
+                                                        "example": "ima.ohara@example.org"
+                                                    },
+                                                    "email_verified_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-07-08T08:05:50.000000Z"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-07-08T08:05:50.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-07-08T08:05:50.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    },
+                    "403": {
+                        "description": "User does not have the right roles."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/coaches/{coach}": {
+            "get": {
+                "tags": [
+                    "Coaches"
+                ],
+                "summary": "Get coach data by ID",
+                "description": "Returns basic data of a user with the 'coach' role. Returns 404 if the user does not have that role.",
+                "operationId": "c4aaa503b73d08fed553c4e153c976d8",
+                "parameters": [
+                    {
+                        "name": "coach",
+                        "in": "path",
+                        "description": "ID of the coach user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 302
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Coach data retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 302
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Mrs. Melissa Franecki Jr."
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "ima.ohara@example.org"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-07-08T08:05:50.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-07-08T08:05:50.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found or is not a coach"
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/rosters": {
+            "get": {
+                "tags": [
+                    "Rosters"
+                ],
+                "summary": "Get all rosters",
+                "description": "Returns a list of all rosters available in the system.",
+                "operationId": "3099c3eea99c0296b86ce4433db362a5",
+                "responses": {
+                    "200": {
+                        "description": "List of rosters retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Humans"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/rosters/{roster}": {
+            "get": {
+                "tags": [
+                    "Rosters"
+                ],
+                "summary": "Get player types for a specific roster",
+                "description": "Returns the list of player types associated with the specified roster.",
+                "operationId": "8dbdba4ec6d0d5ad48159ca05615ae48",
+                "parameters": [
+                    {
+                        "name": "roster",
+                        "in": "path",
+                        "description": "ID of the roster",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Player types retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Lineman"
+                                                    },
+                                                    "roster_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "max_per_team": {
+                                                        "type": "integer",
+                                                        "example": 16
+                                                    },
+                                                    "movement": {
+                                                        "type": "integer",
+                                                        "example": 6
+                                                    },
+                                                    "strength": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "agility": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "passing": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "armor": {
+                                                        "type": "integer",
+                                                        "example": 7
+                                                    },
+                                                    "cost": {
+                                                        "type": "integer",
+                                                        "example": 50000
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    },
+                    "404": {
+                        "description": "No query results for model [App\\\\Models\\\\Roster] *"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/simulate-match": {
+            "post": {
+                "tags": [
+                    "Match Simulation"
+                ],
+                "summary": "Simulate a match between two teams",
+                "description": "Simulates touchdowns scored by players of two teams and returns results with the winner.",
+                "operationId": "523102c41b17a65fa9b6fcefa11c6153",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "team_1_id",
+                                    "team_2_id"
+                                ],
+                                "properties": {
+                                    "team_1_id": {
+                                        "description": "ID of the first team",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "team_2_id": {
+                                        "description": "ID of the second team",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Match simulated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "team_1": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Team A"
+                                                },
+                                                "touchdowns": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "scorers": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "player_name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "touchdowns": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "team_2": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Team B"
+                                                },
+                                                "touchdowns": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "scorers": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "player_name": {
+                                                                "type": "string",
+                                                                "example": "Jane Smith"
+                                                            },
+                                                            "touchdowns": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "winner": {
+                                            "type": "string",
+                                            "example": "Team A"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "team_1": {
+                                        "name": "Team A",
+                                        "touchdowns": 3,
+                                        "scorers": [
+                                            {
+                                                "player_name": "John Doe",
+                                                "touchdowns": 2
+                                            },
+                                            {
+                                                "player_name": "Mike Brown",
+                                                "touchdowns": 1
+                                            }
+                                        ]
+                                    },
+                                    "team_2": {
+                                        "name": "Team B",
+                                        "touchdowns": 1,
+                                        "scorers": [
+                                            {
+                                                "player_name": "Jane Smith",
+                                                "touchdowns": 1
+                                            }
+                                        ]
+                                    },
+                                    "winner": "Team A"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error (e.g., missing or invalid team IDs)"
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/skills": {
+            "get": {
+                "tags": [
+                    "Skills"
+                ],
+                "summary": "Get all skills",
+                "description": "Returns a list of all available skills.",
+                "operationId": "ae74ff391999fe7d8689225802a9d693",
+                "responses": {
+                    "200": {
+                        "description": "List of skills retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Block"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Allows a player to safely block an opponent."
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": 1,
+                                            "name": "Block",
+                                            "description": "Allows a player to safely block an opponent."
+                                        },
+                                        {
+                                            "id": 2,
+                                            "name": "Dodge",
+                                            "description": "Helps a player avoid tackles more easily."
+                                        },
+                                        {
+                                            "id": 3,
+                                            "name": "Mighty Blow",
+                                            "description": "Increases damage on blocks."
+                                        },
+                                        {
+                                            "id": 4,
+                                            "name": "Kick",
+                                            "description": "Improves kicking distance."
+                                        },
+                                        {
+                                            "id": 5,
+                                            "name": "Catch",
+                                            "description": "Increases chance of catching the ball."
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/teams": {
+            "get": {
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Get list of teams with coaches and rosters",
+                "description": "Returns an array of all teams including their associated coach and roster information.",
+                "operationId": "fc1c5dd9ef530faf6e8bba930cad296c",
+                "responses": {
+                    "200": {
+                        "description": "Teams list retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 7
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Chaos Warriors"
+                                                    },
+                                                    "coach_id": {
+                                                        "type": "integer",
+                                                        "example": 15
+                                                    },
+                                                    "roster_id": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "gold_remaining": {
+                                                        "type": "integer",
+                                                        "example": 1000000
+                                                    },
+                                                    "team_value": {
+                                                        "type": "integer",
+                                                        "example": 850000
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-07-08T08:05:50.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-07-08T08:30:00.000000Z"
+                                                    },
+                                                    "coach": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 15
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Coach John Doe"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "format": "email",
+                                                                "example": "coach.john@example.com"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "roster": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Orcs"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Create a new team",
+                "description": "Creates a new team with the given data.",
+                "operationId": "b05c08b4a03b1d708fc94bf7dd5f8e46",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "coach_id",
+                                    "roster_id",
+                                    "gold_remaining",
+                                    "team_value"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "minLength": 6,
+                                        "example": "Chaos Warriors"
+                                    },
+                                    "coach_id": {
+                                        "type": "integer",
+                                        "example": 15
+                                    },
+                                    "roster_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "gold_remaining": {
+                                        "type": "integer",
+                                        "maximum": 30000000,
+                                        "minimum": 800000,
+                                        "example": 1000000
+                                    },
+                                    "team_value": {
+                                        "type": "integer",
+                                        "maximum": 1000000,
+                                        "minimum": 0,
+                                        "example": 850000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Team created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 7
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Chaos Warriors"
+                                        },
+                                        "coach_id": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "roster_id": {
+                                            "type": "integer",
+                                            "example": 2
+                                        },
+                                        "gold_remaining": {
+                                            "type": "integer",
+                                            "example": 1000000
+                                        },
+                                        "team_value": {
+                                            "type": "integer",
+                                            "example": 850000
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T08:05:50.000000Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T08:05:50.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "name": [
+                                                    "The name has already been taken."
+                                                ],
+                                                "coach_id": [
+                                                    "The selected coach id is invalid."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/teams/{team}": {
+            "get": {
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Get a specific team and its players",
+                "operationId": "getTeamById",
+                "parameters": [
+                    {
+                        "name": "team",
+                        "in": "path",
+                        "description": "Team ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 194
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Team retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 194
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "nisi"
+                                                },
+                                                "coach_id": {
+                                                    "type": "integer",
+                                                    "example": 400
+                                                },
+                                                "roster_id": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "gold_remaining": {
+                                                    "type": "integer",
+                                                    "example": 1000000
+                                                },
+                                                "team_value": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-07-08T10:31:59.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-07-08T10:31:59.000000Z"
+                                                },
+                                                "team_players": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 141
+                                                            },
+                                                            "player_type_id": {
+                                                                "type": "integer",
+                                                                "example": 13
+                                                            },
+                                                            "team_id": {
+                                                                "type": "integer",
+                                                                "example": 194
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Dr. Kendrick Bergnaum"
+                                                            },
+                                                            "player_number": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "spp": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2025-07-08T10:32:00.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2025-07-08T10:32:00.000000Z"
+                                                            },
+                                                            "injuries": {
+                                                                "type": "string",
+                                                                "example": "Consequatur aperiam sunt quos.",
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "User does not have permission to view this team",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Forbidden"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Team not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Update an existing team",
+                "description": "Updates the specified team's name and team value. Only admins or the team's coach can update.",
+                "operationId": "788ae5ee4976e2cebd74405dcf4a88e9",
+                "parameters": [
+                    {
+                        "name": "team",
+                        "in": "path",
+                        "description": "ID of the team to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 7
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "team_value"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "minLength": 6,
+                                        "example": "Chaos Warriors Updated"
+                                    },
+                                    "team_value": {
+                                        "type": "integer",
+                                        "maximum": 1000000,
+                                        "minimum": 0,
+                                        "example": 900000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Team updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 7
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Chaos Warriors Updated"
+                                        },
+                                        "coach_id": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "roster_id": {
+                                            "type": "integer",
+                                            "example": 2
+                                        },
+                                        "gold_remaining": {
+                                            "type": "integer",
+                                            "example": 1000000
+                                        },
+                                        "team_value": {
+                                            "type": "integer",
+                                            "example": 900000
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T08:05:50.000000Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T09:00:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden: user does not have permission to update this team"
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "name": [
+                                                    "The name has already been taken."
+                                                ],
+                                                "team_value": [
+                                                    "The team value must be between 0 and 1000000."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid or missing token."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/teams/{team}/players": {
+            "post": {
+                "tags": [
+                    "Team Players"
+                ],
+                "summary": "Add a player to a team",
+                "operationId": "addPlayerToTeam",
+                "parameters": [
+                    {
+                        "name": "team",
+                        "in": "path",
+                        "description": "ID of the team to which the player will be added",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 194
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "player_type_id",
+                                    "player_number",
+                                    "spp"
+                                ],
+                                "properties": {
+                                    "player_type_id": {
+                                        "description": "ID of the player type",
+                                        "type": "integer",
+                                        "example": 13
+                                    },
+                                    "player_number": {
+                                        "description": "Unique number of the player in the team",
+                                        "type": "integer",
+                                        "example": 4
+                                    },
+                                    "name": {
+                                        "description": "Player's name (optional but must be unique per team)",
+                                        "type": "string",
+                                        "example": "Morg 'n Thorg"
+                                    },
+                                    "injuries": {
+                                        "description": "Optional injury notes",
+                                        "type": "string",
+                                        "example": "Fractured Skull",
+                                        "nullable": true
+                                    },
+                                    "spp": {
+                                        "description": "Star Player Points",
+                                        "type": "integer",
+                                        "maximum": 20,
+                                        "minimum": 0,
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Player successfully added to the team",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 141
+                                        },
+                                        "team_id": {
+                                            "type": "integer",
+                                            "example": 194
+                                        },
+                                        "player_type_id": {
+                                            "type": "integer",
+                                            "example": 13
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Morg 'n Thorg"
+                                        },
+                                        "player_number": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "injuries": {
+                                            "type": "string",
+                                            "example": "Fractured Skull"
+                                        },
+                                        "spp": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T12:00:00.000000Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-07-08T12:00:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "player_number": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The player number has already been taken."
+                                                    }
+                                                },
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name has already been taken."
+                                                    }
+                                                },
+                                                "spp": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The spp must be at most 20."
+                                                    }
+                                                },
+                                                "player_type_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "You already have the maximum of that kind of player."
+                                                    }
+                                                },
+                                                "general": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The Team has not enough gold. Only XXXXXX gold remaining."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - team does not belong to the user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The team does not belong to the user."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/team-players/{teamPlayer}": {
+            "put": {
+                "tags": [
+                    "Team Players"
+                ],
+                "summary": "Update a team player's injuries or SPP",
+                "operationId": "updateTeamPlayer",
+                "parameters": [
+                    {
+                        "name": "teamPlayer",
+                        "in": "path",
+                        "description": "ID of the team player to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 141
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "spp"
+                                ],
+                                "properties": {
+                                    "injuries": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Broken Arm",
+                                        "nullable": true
+                                    },
+                                    "spp": {
+                                        "type": "integer",
+                                        "maximum": 20,
+                                        "minimum": 0,
+                                        "example": 12
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Player updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Player updated successfully"
+                                        },
+                                        "player": {
+                                            "type": "integer",
+                                            "example": 141
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "spp": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The spp must be between 0 and 20."
+                                                    }
+                                                },
+                                                "injuries": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The injuries must not be greater than 255 characters."
+                                                    }
+                                                },
+                                                "general": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Could not verify the player."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user does not own the team",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The team does not belong to the user."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Team player not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Team Players"
+                ],
+                "summary": "Delete a team player and refund their cost",
+                "operationId": "deleteTeamPlayer",
+                "parameters": [
+                    {
+                        "name": "teamPlayer",
+                        "in": "path",
+                        "description": "ID of the team player to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 145
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Player deleted successfully and gold refunded to the team",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Player deleted successfully"
+                                        },
+                                        "player": {
+                                            "type": "string",
+                                            "example": "Dr. Summer Bins Jr."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "general": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Could not verify the player."
+                                                    }
+                                                },
+                                                "team_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The team does not belong to the user."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Team player not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Autenticación usando Bearer Token JWT",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authoritation",
+            "description": "Authoritation"
+        },
+        {
+            "name": "Coaches",
+            "description": "Coaches"
+        },
+        {
+            "name": "Rosters",
+            "description": "Rosters"
+        },
+        {
+            "name": "Match Simulation",
+            "description": "Match Simulation"
+        },
+        {
+            "name": "Skills",
+            "description": "Skills"
+        },
+        {
+            "name": "Teams",
+            "description": "Teams"
+        },
+        {
+            "name": "Team Players",
+            "description": "Team Players"
+        }
+    ]
+}

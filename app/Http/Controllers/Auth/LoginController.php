@@ -12,12 +12,42 @@ use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
+
+
+     /**
+     * @OA\Post(
+     *     path="/api/login",
+    *     operationId="loginUser",
+    *     summary="Iniciar sesión",
+    *     tags={"Authoritation"},
+     *     description="Autentica un usuario y devuelve un token Bearer.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", format="email", example="usuario@ejemplo.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="secret123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login exitoso",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."),
+     *             @OA\Property(property="token_type", type="string", example="Bearer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Credenciales inválidas"
+     *     )
+     * )
+     */
     public function login(UserLoginRequest $request)
     {
         $request->validated();
 
         $user = User::where('email', $request->email)->first();
-
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
@@ -28,8 +58,13 @@ class LoginController extends Controller
             ], 422);
         }
 
-        $token = $user->createToken('auth_token')->accessToken;
 
+    try {
+        $token = $user->createToken('auth_token')->accessToken;
+    } catch (\Throwable $e) {
+        
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
@@ -37,6 +72,25 @@ class LoginController extends Controller
 
     }
 
+
+   
+     /**
+     * @OA\Post(
+     *     path="/api/logout",
+     *     summary="Cerrar sesión",
+     *     operationId="logoutUser",
+     *     tags={"Authoritation"},
+     *     description="Cierra la sesión del usuario invalidando el token de acceso actual. El usuario deberá autenticarse nuevamente para obtener un nuevo token.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully logged out",
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated."
+     *     )
+     * )
+     */ 
     public function logout(Request $request)
     {
         $token = $request->user()->token();

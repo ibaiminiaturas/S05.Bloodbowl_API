@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\Traits\UtilsForTesting;
 
-
 class UserLoginTest extends TestCase
 {
     use UtilsForTesting;
@@ -15,11 +14,11 @@ class UserLoginTest extends TestCase
     public function test_user_can_authenticate_with_correct_credentials()
     {
 
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->postJson('/api/login', [
-            'email' => $user->email,
-            'password' =>  'secret123',
+            'email' => $coach->email,
+            'password' =>  'password',
         ]);
 
         $response->assertStatus(200);
@@ -29,19 +28,18 @@ class UserLoginTest extends TestCase
             'token_type',
         ]);
 
-        if ($user != null) {
-            $user->delete();
-        }
+
+        $coach->delete();
 
     }
 
     public function test_user_cant_authenticate_with_incorrect_credentials()
     {
 
-        $user = $this->DeleteUserAndCreate();
+        $coach = User::factory()->coach()->create();
 
         $response = $this->postJson('/api/login', [
-            'email' => $user->email,
+            'email' => $coach->email,
             'password' =>  'secret1234',
         ]);
 
@@ -52,10 +50,9 @@ class UserLoginTest extends TestCase
         $errors = $response->json('errors');
         $this->assertStringContainsString('Invalid credentials.', $errors['email'][0]);
 
-        
-        if ($user != null) {
-            $user->delete();
-        }
+
+        $coach->delete();
+
 
     }
 

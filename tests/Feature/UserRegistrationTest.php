@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 
 class UserRegistrationTest extends TestCase
 {
@@ -22,20 +23,22 @@ class UserRegistrationTest extends TestCase
             'name' => 'Ibaimania',
             'email' => 'ibai@example.com',
             'password' => 'secret123',
-            'password_confirmation' =>'secret123',
+            'password_confirmation' => 'secret123',
         ]);
+
         $response->assertStatus(201);
 
         $this->assertDatabaseHas('users', [
             'email' => 'ibai@example.com',
         ]);
 
-        
+
+        $user = User::Where('email', 'ibai@example.com')->first();
+
+
         if ($user != null) {
             $user->delete();
         }
-
-
     }
 
 
@@ -48,27 +51,21 @@ class UserRegistrationTest extends TestCase
             $user->delete();
         }
 
-        $response = $this->postJson('/api/register', [
-            'name' => 'Ibaimania',
-            'email' => 'ibai@example.com',
-            'password' => 'secret123',
-            'password_confirmation' =>'secret123',
-        ]);
-
+        $coach = User::factory()->coach()->create();
 
 
         $response = $this->postJson('/api/register', [
             'name' => 'anotherIbai',
-            'email' => 'ibai@example.com',
-            'password' => 'secret1234',
-            'password_confirmation' => 'secret1234',
+            'email' => $coach->email,
+            'password' => 'password',
+            'password_confirmation' => 'password',
         ]);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('email');
         $errors = $response->json('errors');
         $this->assertStringContainsString('The email has already been taken.', $errors['email'][0]);
-        
+
         $user = User::Where('email', 'ibai@example.com')->first();
 
         if ($user != null) {
