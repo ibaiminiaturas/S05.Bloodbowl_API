@@ -36,6 +36,11 @@ Route::middleware(['auth:api', 'token.revoked', 'role:admin'])->group(function (
 });
 // Rutas protegidas por autenticación
 Route::middleware(['auth:api', 'token.revoked', 'role:admin|coach'])->group(function () {
+    Route::get('/me', function (Request $request) {
+        return response()->json([
+            'user' => $request->user()
+        ]);
+    });
     Route::post('/logout', [LoginController::class, 'logout']);
     Route::get('/skills', [SkillController::class, 'index']);
     Route::get('/rosters', [RosterController::class, 'index']);
