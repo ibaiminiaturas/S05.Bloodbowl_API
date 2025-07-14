@@ -53,3 +53,7 @@ Route::middleware(['auth:api', 'token.revoked', 'role:admin|coach'])->group(func
     Route::delete('/players/{teamPlayer}', [TeamPlayerController::class, 'delete']);
 
 });
+
+Route::options('/{any}', function () {
+    return response('', 204);
+})->where('any', '.*');
