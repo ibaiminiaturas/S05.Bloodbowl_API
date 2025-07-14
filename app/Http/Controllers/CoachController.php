@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\PlayerType;
 use Illuminate\Http\Request;
+use App\Http\Requests\UserDeleteRequest;
 
 class CoachController extends Controller
 {
@@ -59,6 +60,88 @@ class CoachController extends Controller
         return response()->json(['data' => $users]);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/coaches/{coach}",
+     *     summary="Eliminar un coach",
+     *     description="Elimina un coach por ID. Solo accesible para usuarios con rol admin. También elimina sus equipos y jugadores asociados.",
+     *     operationId="deleteCoach",
+     *     tags={"Coaches"},
+     *     security={{"bearerAuth":{}}},
+     *
+     *     @OA\Parameter(
+     *         name="coach",
+     *         in="path",
+     *         description="ID del coach a eliminar",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=3)
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", format="email", example="coach@example.com")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Coach eliminado correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Coach deleted successfully"),
+     *             @OA\Property(property="coach", type="string", example="Ibai")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=400,
+     *         description="El usuario no es un coach o el email es inválido",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Not a coach")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="There is no coach registered with that email.")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autenticado"
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado"
+     *     )
+     * )
+     */
+    public function delete(UserDeleteRequest $request, User $coach)
+    {
+        $validated = $request->validated();
+
+        $coach->delete();
+
+        return response()->json([
+            'message' => 'Coach deleted successfully',
+            'coach' => $coach->name ,
+        ], 200);
+
+    }
 
 
     /**

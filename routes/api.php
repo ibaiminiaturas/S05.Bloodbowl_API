@@ -29,6 +29,7 @@ Route::middleware(['auth:api', 'token.revoked', 'role:admin'])->group(function (
     });
 
     Route::get('/coaches', [CoachController::class, 'index']);
+    Route::delete('/coaches/{coach}', [CoachController::class, 'delete']);
     Route::post('/teams', [TeamController::class, 'store']);
     Route::get('/teams', [TeamController::class, 'index']);
     Route::post('/matches/simulate', [SimulateMatchController::class, 'post']);
