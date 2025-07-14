@@ -54,8 +54,8 @@ class CoachController extends Controller
         /*$users = User::whereHas('roles', function ($q) {
             $q->where('name', 'coach')->where('guard_name', 'api');
         })->get();*/
-
-        $users = User::role('coach')->with('teams')->get();
+        $perPage = (int) env('PAGINATE_PER_PAGE', 10);
+        $users = User::role('coach')->with('teams')->paginate($perPage);
 
         return response()->json(['data' => $users]);
     }
@@ -130,10 +130,8 @@ class CoachController extends Controller
      *     )
      * )
      */
-    public function delete(UserDeleteRequest $request, User $coach)
+    public function delete(Request $request, User $coach)
     {
-        $validated = $request->validated();
-
         $coach->delete();
 
         return response()->json([
