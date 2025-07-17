@@ -157,10 +157,20 @@ class TeamController extends Controller
         $user = User::with('roles')->find(Auth::id());
 
         if ($user->hasRole('admin') || ($user->hasRole('coach') && $team->coach_id == $user->id)) {
-            $team->update([
-                'name' => $validated['name'],
-                'team_value' => $validated['team_value'],
-            ]);
+            $dataToUpdate = [];
+
+            if (isset($validated['name'])) {
+                $dataToUpdate['name'] = $validated['name'];
+            }
+
+            if (isset($validated['team_value'])) {
+                $dataToUpdate['team_value'] = $validated['team_value'];
+            }
+
+            if (!empty($dataToUpdate)) {
+                $team->update($dataToUpdate);
+            }
+
             return response()->json($team, 200);
         } else {
             return response()->json($team, 403);

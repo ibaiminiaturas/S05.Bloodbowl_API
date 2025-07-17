@@ -22,8 +22,8 @@ class TeamUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-                    'name' => 'required|min:6|max:255|unique:teams,name',
-                    'team_value' => 'required|integer|min:0|max:1000000',
+                    'name' => 'min:6|max:255|unique:teams,name',
+                    'team_value' => 'integer|min:0|max:1000000',
 
         ];
     }
