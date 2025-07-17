@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TeamUpdateRequest extends FormRequest
 {
@@ -21,10 +22,22 @@ class TeamUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-                    'name' => 'min:6|max:255|unique:teams,name',
-                    'team_value' => 'integer|min:0|max:1000000',
+        $team = $this->route('team'); // o como accedas al modelo
 
+        return [
+            'name' => [
+                'sometimes',
+                'string',
+                'min:1',
+                'max:255',
+                Rule::unique('teams', 'name')->ignore($team->id),
+            ],
+            'team_value' => [
+                'sometimes',
+                'integer',
+                'min:0',
+                'max:1000000',
+            ],
         ];
     }
 }
