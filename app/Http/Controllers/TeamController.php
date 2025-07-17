@@ -80,7 +80,7 @@ class TeamController extends Controller
             'team_value' => $validated['team_value'],
         ]);
 
-        return response()->json($team, 201);
+        return response()->json($team->load('coach', 'roster'), 201);
 
     }
 
@@ -170,9 +170,9 @@ class TeamController extends Controller
                 $team->update($dataToUpdate);
             }
 
-            return response()->json($team, 200);
+            return response()->json($team->load('coach', 'roster'), 200);
         } else {
-            return response()->json($team, 403);
+            return response()->json($team->load('coach', 'roster'), 403);
         }
 
     }
@@ -308,5 +308,16 @@ class TeamController extends Controller
         } else {
             return response()->json(['data' => $team], 403);
         }
+    }
+
+    public function delete(Team $team)
+    {
+
+        $team->delete();
+        return response()->json([
+         'message' => 'Team deleted successfully',
+         'coach' => $team->name ,
+        ], 200);
+
     }
 }
