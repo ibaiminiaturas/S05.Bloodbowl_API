@@ -28,8 +28,8 @@ class TeamPlayerUpdateDeleteRequest extends FormRequest
     {
         return [
 
-            'injuries' => 'string|max:255|nullable',
-            'spp' => 'integer|min:0|max:20',
+            'injuries' => 'nullable|string|max:255|nullable',
+            'spp' => 'nullable|integer|min:0|max:20',
         ];
     }
 

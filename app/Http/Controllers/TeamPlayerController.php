@@ -13,7 +13,6 @@ use App\Models\Roster;
 
 class TeamPlayerController extends Controller
 {
-
     /**
  * @OA\Post(
  *     path="/api/teams/{team}/players",
@@ -125,90 +124,99 @@ class TeamPlayerController extends Controller
 
     }
 
-/**
- * @OA\Put(
- *     path="/api/team-players/{teamPlayer}",
- *     summary="Update a team player's injuries or SPP",
- *     operationId="updateTeamPlayer",
- *     tags={"Team Players"},
- *     security={{"bearerAuth":{}}},
- *     @OA\Parameter(
- *         name="teamPlayer",
- *         in="path",
- *         required=true,
- *         description="ID of the team player to update",
- *         @OA\Schema(type="integer", example=141)
- *     ),
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"spp"},
- *             @OA\Property(property="injuries", type="string", maxLength=255, nullable=true, example="Broken Arm"),
- *             @OA\Property(property="spp", type="integer", minimum=0, maximum=20, example=12)
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Player updated successfully",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="Player updated successfully"),
- *             @OA\Property(property="player", type="integer", example=141)
- *         )
- *     ),
- *     @OA\Response(
- *         response=422,
- *         description="Validation failed",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="The given data was invalid."),
- *             @OA\Property(
- *                 property="errors",
- *                 type="object",
- *                 @OA\Property(
- *                     property="spp",
- *                     type="array",
- *                     @OA\Items(type="string", example="The spp must be between 0 and 20.")
- *                 ),
- *                 @OA\Property(
- *                     property="injuries",
- *                     type="array",
- *                     @OA\Items(type="string", example="The injuries must not be greater than 255 characters.")
- *                 ),
- *                 @OA\Property(
- *                     property="general",
- *                     type="array",
- *                     @OA\Items(type="string", example="Could not verify the player.")
- *                 )
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=403,
- *         description="Forbidden - user does not own the team",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="The team does not belong to the user.")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Team player not found"
- *     )
- * )
- */
+    /**
+     * @OA\Put(
+     *     path="/api/team-players/{teamPlayer}",
+     *     summary="Update a team player's injuries or SPP",
+     *     operationId="updateTeamPlayer",
+     *     tags={"Team Players"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="teamPlayer",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the team player to update",
+     *         @OA\Schema(type="integer", example=141)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"spp"},
+     *             @OA\Property(property="injuries", type="string", maxLength=255, nullable=true, example="Broken Arm"),
+     *             @OA\Property(property="spp", type="integer", minimum=0, maximum=20, example=12)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Player updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Player updated successfully"),
+     *             @OA\Property(property="player", type="integer", example=141)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation failed",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="spp",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="The spp must be between 0 and 20.")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="injuries",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="The injuries must not be greater than 255 characters.")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="general",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="Could not verify the player.")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - user does not own the team",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The team does not belong to the user.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Team player not found"
+     *     )
+     * )
+     */
 
     public function update(TeamPlayerUpdateDeleteRequest $request, TeamPlayer $teamPlayer)
     {
         $validated = $request->validated();
 
-        $teamPlayer->update([
-            'injuries' => $validated['injuries'],
-            'spp' => $validated['spp'],
-        ]);
+        // Solo actualizar los campos que estén presentes en la request validada
+        $dataToUpdate = [];
+
+        if ($request->has('injuries')) {
+            $dataToUpdate['injuries'] = $validated['injuries'];
+        }
+
+        if ($request->has('spp')) {
+            $dataToUpdate['spp'] = $validated['spp'];
+        }
+
+        $teamPlayer->update($dataToUpdate);
 
         return response()->json([
             'message' => 'Player updated successfully',
-            'player' => $teamPlayer->id,
+            'player' => $teamPlayer,
         ], 200);
+
 
     }
 

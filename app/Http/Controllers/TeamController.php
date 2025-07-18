@@ -229,8 +229,15 @@ class TeamController extends Controller
 
     public function index()
     {
+        $user = User::with('roles')->find(Auth::id());
         $perPage = (int) env('PAGINATE_PER_PAGE', 10);
-        $teams = Team::with(['coach', 'roster'])->paginate($perPage);
+        if ($user->hasRole('coach')) {
+            $teams = Team::with(['coach', 'roster'])->paginate($perPage)->where('coach_id', $user->id);
+        } else {
+            $teams = Team::with(['coach', 'roster'])->paginate($perPage);
+        }
+
+
         return response()->json(['data' => $teams]);
     }
 
@@ -303,7 +310,7 @@ class TeamController extends Controller
         $user = User::with('roles')->find(Auth::id());
 
         if ($user->hasRole('admin') || ($user->hasRole('coach') && $team->coach_id == $user->id)) {
-            $team->load('teamPlayers');
+            $team->load('teamPlayers.playerType');
             return response()->json(['data' => $team], 200);
         } else {
             return response()->json(['data' => $team], 403);
