@@ -48,7 +48,7 @@ class TeamPlayerCreationRequest extends FormRequest
             ],
 
             'name' => [
-                'min:6',
+                'min:1',
                 'max:255',
                 Rule::unique('team_players')->where(function ($query) use ($teamId) {
                     return $query->where('team_id', $teamId)
@@ -56,9 +56,9 @@ class TeamPlayerCreationRequest extends FormRequest
                 }),
             ],
 
-            'injuries' => 'string|max:255|nullable',
+            'injuries' => 'nullable|string|max:255|nullable',
 
-            'spp' => 'integer|min:0|max:20',
+            'spp' => 'nullable|integer|min:0|max:20',
         ];
     }
 

@@ -103,7 +103,7 @@ class TeamPlayerController extends Controller
     public function store(TeamPlayerCreationRequest $request, Team $team)
     {
         $validated = $request->validated();
-
+        $validated['spp'] = $validated['spp'] ?? 0;
         $teamPlayer = TeamPlayer::create([
             'name' => $validated['name'],
             'team_id' => $team->id,
