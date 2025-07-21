@@ -21,6 +21,8 @@ class CoachesInfoRetrieveTest extends TestCase
     {
         $admin = $this->getAdminUser();
         Passport::actingAs($admin);
+        config(['PAGINATE_PER_PAGE' => 999]);
+        $perPage = (int) config('PAGINATE_PER_PAGE');
 
         $response = $this->getJson('/api/coaches');
 
@@ -28,12 +30,14 @@ class CoachesInfoRetrieveTest extends TestCase
 
         $data = $response->json();
         $this->assertNotEmpty($data);
+        //dd($data);
         //codigo por si acaso que menuda liada
         //$coachesAmount = User::with('roles')->get()->filter(
         //   fn ($user) => $user->roles->where('name', 'coach')->toArray()
         //)->count();
         $users = User::role('coach')->get();
-        $this->assertEquals(count($data['data']), $users->count());
+
+        $this->assertEquals(count($data['data']['data']), count($users));
 
     }
 

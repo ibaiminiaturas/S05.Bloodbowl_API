@@ -28,11 +28,11 @@ class TeamsRetrieveTest extends TestCase
 
         $data = $response->json('data');
 
-        $this->assertEquals(count($data), Team::all()->count());
+        $this->assertEquals(count($data['data']), Team::all()->count());
 
     }
 
-    public function test_coach_can_not_retrieve_all_teams(): void
+    public function test_coach_can_retrieve_only_his_teams(): void
     {
         $coach = User::factory()->coach()->create();
 
@@ -40,7 +40,7 @@ class TeamsRetrieveTest extends TestCase
 
         $response = $this->getJson('/api/teams');
 
-        $response->assertStatus(403);
+        $response->assertStatus(200);
         $coach->delete();
     }
 

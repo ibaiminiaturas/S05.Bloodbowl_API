@@ -231,11 +231,14 @@ class TeamController extends Controller
     {
         $user = User::with('roles')->find(Auth::id());
         $perPage = (int) env('PAGINATE_PER_PAGE', 10);
-        if ($user->hasRole('coach')) {
-            $teams = Team::with(['coach', 'roster'])->paginate($perPage)->where('coach_id', $user->id);
-        } else {
-            $teams = Team::with(['coach', 'roster'])->paginate($perPage);
-        }
+            if ($user->hasRole('coach')) {
+                $teams = Team::with(['coach', 'roster'])
+                            ->where('coach_id', $user->id)
+                            ->paginate($perPage);
+            } else {
+                $teams = Team::with(['coach', 'roster'])
+                            ->paginate($perPage);
+            }
 
 
         return response()->json(['data' => $teams]);

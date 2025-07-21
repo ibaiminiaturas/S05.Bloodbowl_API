@@ -54,7 +54,8 @@ class CoachController extends Controller
         /*$users = User::whereHas('roles', function ($q) {
             $q->where('name', 'coach')->where('guard_name', 'api');
         })->get();*/
-        $perPage = (int) env('PAGINATE_PER_PAGE', 10);
+        $perPage = config('PAGINATE_PER_PAGE');
+
         $users = User::role('coach')->with('teams')->paginate($perPage);
 
         return response()->json(['data' => $users]);
