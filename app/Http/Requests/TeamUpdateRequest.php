@@ -27,14 +27,14 @@ class TeamUpdateRequest extends FormRequest
 
         return [
             'name' => [
-                'sometimes',
+                'nullable',
                 'string',
                 'min:1',
                 'max:255',
                 Rule::unique('teams', 'name')->ignore($team->id),
             ],
             'team_value' => [
-                'sometimes',
+                'nullable',
                 'integer',
                 'min:0',
                 'max:1000000',
