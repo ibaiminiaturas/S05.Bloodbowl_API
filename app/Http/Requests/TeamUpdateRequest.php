@@ -23,14 +23,22 @@ class TeamUpdateRequest extends FormRequest
 
     public function rules(): array
     {
+        $team = $this->route('team'); // o como accedas al modelo
+
         return [
             'name' => [
-                'nullable',
-                'min:0',
+                'sometimes',
+                'string',
+                'min:1',
                 'max:255',
-                Rule::unique('teams', 'name')->ignore($this->team->id),
+                Rule::unique('teams', 'name')->ignore($team->id),
             ],
-            'team_value' => 'nullable|integer|min:0|max:1000000',
+            'team_value' => [
+                'sometimes',
+                'integer',
+                'min:0',
+                'max:1000000',
+            ],
         ];
     }
 

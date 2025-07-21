@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TeamController extends Controller
 {
-
     /**
  * @OA\Post(
  *     path="/api/teams",
@@ -81,7 +80,7 @@ class TeamController extends Controller
             'team_value' => $validated['team_value'],
         ]);
 
-        return response()->json($team, 201);
+        return response()->json($team->load('coach', 'roster'), 201);
 
     }
 
@@ -171,66 +170,74 @@ class TeamController extends Controller
                 $team->update($dataToUpdate);
             }
 
-            return response()->json($team, 200);
+            return response()->json($team->load('coach', 'roster'), 200);
         } else {
-            return response()->json($team, 403);
+            return response()->json($team->load('coach', 'roster'), 403);
         }
 
     }
 
 
-/**
- * @OA\Get(
- *     path="/api/teams",
- *     summary="Get list of teams with coaches and rosters",
- *     tags={"Teams"},
- *     description="Returns an array of all teams including their associated coach and roster information.",
- *     security={{"bearerAuth":{}}},
- *     @OA\Response(
- *         response=200,
- *         description="Teams list retrieved successfully",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(
- *                 property="data",
- *                 type="array",
- *                 @OA\Items(
- *                     type="object",
- *                     @OA\Property(property="id", type="integer", example=7),
- *                     @OA\Property(property="name", type="string", example="Chaos Warriors"),
- *                     @OA\Property(property="coach_id", type="integer", example=15),
- *                     @OA\Property(property="roster_id", type="integer", example=2),
- *                     @OA\Property(property="gold_remaining", type="integer", example=1000000),
- *                     @OA\Property(property="team_value", type="integer", example=850000),
- *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-07-08T08:05:50.000000Z"),
- *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-07-08T08:30:00.000000Z"),
- *                     @OA\Property(
- *                         property="coach",
- *                         type="object",
- *                         @OA\Property(property="id", type="integer", example=15),
- *                         @OA\Property(property="name", type="string", example="Coach John Doe"),
- *                         @OA\Property(property="email", type="string", format="email", example="coach.john@example.com")
- *                     ),
- *                     @OA\Property(
- *                         property="roster",
- *                         type="object",
- *                         @OA\Property(property="id", type="integer", example=2),
- *                         @OA\Property(property="name", type="string", example="Orcs")
- *                     )
- *                 )
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=401,
- *         description="Unauthorized. Invalid or missing token."
- *     )
- * )
- */
+    /**
+     * @OA\Get(
+     *     path="/api/teams",
+     *     summary="Get list of teams with coaches and rosters",
+     *     tags={"Teams"},
+     *     description="Returns an array of all teams including their associated coach and roster information.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Teams list retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=7),
+     *                     @OA\Property(property="name", type="string", example="Chaos Warriors"),
+     *                     @OA\Property(property="coach_id", type="integer", example=15),
+     *                     @OA\Property(property="roster_id", type="integer", example=2),
+     *                     @OA\Property(property="gold_remaining", type="integer", example=1000000),
+     *                     @OA\Property(property="team_value", type="integer", example=850000),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-07-08T08:05:50.000000Z"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-07-08T08:30:00.000000Z"),
+     *                     @OA\Property(
+     *                         property="coach",
+     *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=15),
+     *                         @OA\Property(property="name", type="string", example="Coach John Doe"),
+     *                         @OA\Property(property="email", type="string", format="email", example="coach.john@example.com")
+     *                     ),
+     *                     @OA\Property(
+     *                         property="roster",
+     *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=2),
+     *                         @OA\Property(property="name", type="string", example="Orcs")
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized. Invalid or missing token."
+     *     )
+     * )
+     */
 
     public function index()
     {
-        $teams = Team::with(['coach', 'roster'])->get();
+        $user = User::with('roles')->find(Auth::id());
+        $perPage = (int) env('PAGINATE_PER_PAGE', 10);
+        if ($user->hasRole('coach')) {
+            $teams = Team::with(['coach', 'roster'])->paginate($perPage)->where('coach_id', $user->id);
+        } else {
+            $teams = Team::with(['coach', 'roster'])->paginate($perPage);
+        }
+
+
         return response()->json(['data' => $teams]);
     }
 
@@ -303,10 +310,21 @@ class TeamController extends Controller
         $user = User::with('roles')->find(Auth::id());
 
         if ($user->hasRole('admin') || ($user->hasRole('coach') && $team->coach_id == $user->id)) {
-            $team->load('teamPlayers');
+            $team->load('teamPlayers.playerType');
             return response()->json(['data' => $team], 200);
         } else {
             return response()->json(['data' => $team], 403);
         }
+    }
+
+    public function delete(Team $team)
+    {
+
+        $team->delete();
+        return response()->json([
+         'message' => 'Team deleted successfully',
+         'coach' => $team->name ,
+        ], 200);
+
     }
 }

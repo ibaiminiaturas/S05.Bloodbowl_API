@@ -22,7 +22,7 @@ class TeamCreationRequest extends FormRequest
     public function rules(): array
     {
         return [
-                    'name' => 'required|min:6|max:255|unique:teams,name',
+                    'name' => 'required|min:1|max:255|unique:teams,name',
                     'coach_id' => 'required|integer|exists:users,id',
                     'roster_id' => 'required|integer|exists:rosters,id',
                     'gold_remaining' => 'required|integer|min:800000|max:30000000',
