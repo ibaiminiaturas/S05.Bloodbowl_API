@@ -48,6 +48,7 @@ class TeamPlayerCreationRequest extends FormRequest
             ],
 
             'name' => [
+                'required',
                 'min:1',
                 'max:255',
                 Rule::unique('team_players')->where(function ($query) use ($teamId) {
