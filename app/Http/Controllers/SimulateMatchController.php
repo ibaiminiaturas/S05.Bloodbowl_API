@@ -7,7 +7,7 @@ use App\Http\Requests\SimulateMatchRequest;
 use App\Models\Team;
 /**
  * @OA\Post(
- *     path="/api/simulate-match",
+ *     path="/api/matches/simulate",
  *     summary="Simulate a match between two teams",
  *     tags={"Match Simulation"},
  *     description="Simulates touchdowns scored by players of two teams and returns results with the winner.",

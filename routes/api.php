@@ -24,9 +24,9 @@ Route::get('/status', function () {
 
 // Rutas protegidas por autenticación
 Route::middleware(['auth:api', 'token.revoked', 'role:admin'])->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+//    Route::get('/user', function (Request $request) {
+ //       return $request->user();
+ //   });
 
     Route::get('/coaches', [CoachController::class, 'index']);
     Route::delete('/coaches/{coach}', [CoachController::class, 'delete']);
@@ -44,17 +44,23 @@ Route::middleware(['auth:api', 'token.revoked', 'role:admin|coach'])->group(func
     });
 
     Route::post('/logout', [LoginController::class, 'logout']);
+
     Route::get('/skills', [SkillController::class, 'index']);
+
     Route::get('/rosters', [RosterController::class, 'index']);
     Route::get('/rosters/{roster}', [RosterController::class, 'show']);
+
     Route::get('/coaches/{coach}', [CoachController::class, 'show']);
+
     Route::put('/teams/{team}', [TeamController::class, 'update']);
     Route::get('/teams/{team}', [TeamController::class, 'show']);
+    Route::delete('/teams/{team}', [TeamController::class, 'delete']);
+    Route::get('/teams', [TeamController::class, 'index']);
+    
     Route::post('/teams/{team}/players', [TeamPlayerController::class, 'store']);
     Route::put('/players/{teamPlayer}', [TeamPlayerController::class, 'update']);
     Route::delete('/players/{teamPlayer}', [TeamPlayerController::class, 'delete']);
-    Route::delete('/teams/{team}', [TeamController::class, 'delete']);
-    Route::get('/teams', [TeamController::class, 'index']);
+    
 });
 
 Route::options('/{any}', function () {
