@@ -15,7 +15,7 @@ class SimulateMatchRequest extends FormRequest
     {
         return [
             'team_1_id' => 'required|exists:teams,id',
-            'team_2_id' => 'required|exists:teams,id|different:team_1_id',
+            'team_2_id' => 'required|exists:teams,id',
         ];
     }
 }
