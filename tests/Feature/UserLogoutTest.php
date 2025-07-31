@@ -26,7 +26,7 @@ class UserLogoutTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson('/api/user');
+        ])->getJson('/api/me');
 
         $response->assertStatus(401);
     }

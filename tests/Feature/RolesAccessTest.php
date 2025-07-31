@@ -21,7 +21,7 @@ class RolesAccessTest extends TestCase
 
         Passport::actingAs($admin);
 
-        $response = $this->getJson('/api/user');
+        $response = $this->getJson('/api/coaches');
 
         $response->assertStatus(200);
     }
@@ -36,7 +36,7 @@ class RolesAccessTest extends TestCase
 
         Passport::actingAs($coach);
 
-        $response = $this->getJson('/api/user');
+        $response = $this->getJson('/api/coaches');
 
         $response->assertStatus(403);
         $coach->delete();

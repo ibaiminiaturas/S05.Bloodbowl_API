@@ -20,7 +20,7 @@ class AuthenticatedUserTryAccessTest extends TestCase
         Passport::actingAs($admin);
 
 
-        $response = $this->getJson('/api/user');
+        $response = $this->getJson('/api/me');
 
         $response->assertStatus(200);
         $response->assertJsonFragment([

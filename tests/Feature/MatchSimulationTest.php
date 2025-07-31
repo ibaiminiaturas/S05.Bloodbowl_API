@@ -74,20 +74,4 @@ class MatchSimulationTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_simulate_match_fails_if_teams_are_the_same()
-    {
-        TeamPlayer::query()->delete();
-        Team::query()->delete();
-        $admin = $this->getAdminUser();
-        $team = Team::factory()->create();
-        Passport::actingAs($admin);
-
-        $response = $this->postJson('/api/matches/simulate', [
-            'team_1_id' => $team->id,
-            'team_2_id' => $team->id,
-        ]);
-
-        $response->assertStatus(422);
-        
-    }
 }

@@ -10,7 +10,7 @@ class UnauthenticatedUserTryAccessTest extends TestCase
 {
     public function test_Unauthenticated_user_cannot_access_user_route()
     {
-        $response = $this->getJson('/api/user');
+        $response = $this->getJson('/api/me');
 
         $response->assertStatus(401);
     }
