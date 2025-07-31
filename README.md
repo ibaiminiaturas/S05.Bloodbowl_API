@@ -61,6 +61,14 @@ It is deployed in production on **Railway** and fully documented using **Swagger
     ```bash
     php artisan passport:install
     ```
+To the question "Would you like to run all pending database migrations? (yes/no) [yes] "
+Answer 'yes', this will create the needed migrations for passport.
+
+To the question "Would you like to create the "personal access" grant client? (yes/no) [yes]"
+Answer 'yes', this will create the needed registers in the tables for passport to work.
+
+To the question "Which user provider should this client use to retrieve users? [users]"
+Answer 'users'. 
 
 7. (Optional) Publish Swagger documentation assets:
 
