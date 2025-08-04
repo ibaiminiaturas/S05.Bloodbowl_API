@@ -70,18 +70,31 @@ Answer 'yes', this will create the needed registers in the tables for passport t
 To the question "Which user provider should this client use to retrieve users? [users]"
 Answer 'users'. 
 
-7. (Optional) Publish Swagger documentation assets:
-
-    ```bash
-    php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
-    php artisan optimize:clear
-    ```
-
-8. Serve the application:
+7. Serve the application:
 
     ```bash
     php artisan serve
     ```
+    
+8. (Optional) Publish Swagger documentation assets:
+
+    ```bash
+    php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
+
+To check the documentation go to http://127.0.0.1:8000/api/documentation
+If you don't see anything look for this line on the file config\l5-swagger.php:
+
+    'use_absolute_path' => env('L5_SWAGGER_USE_ABSOLUTE_PATH', false),
+    
+change it to 
+
+    'use_absolute_path' => env('L5_SWAGGER_USE_ABSOLUTE_PATH', true),
+
+Then do:
+    ```
+    php artisan optimize:clear
+    ```
+Now the documentation should be shown
 
 ---
 
