@@ -74,6 +74,7 @@ Answer 'users'.
 
     ```bash
     php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
+    php artisan optimize:clear
     ```
 
 8. Serve the application:
